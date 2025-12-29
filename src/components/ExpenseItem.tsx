@@ -3,7 +3,15 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { expense } from "@/types/expense";
 
-export default function ExpenseItem({ expense }: { expense: expense }) {
+type ExpenseItemProps = {
+  expense: expense;
+  onDeleteExpense?: (id: string) => void;
+};
+
+export default function ExpenseItem({
+  expense,
+  onDeleteExpense,
+}: ExpenseItemProps) {
   return (
     <Card className="p-4 flex justify-between items-center">
       <div className="space-y-1">
@@ -18,7 +26,11 @@ export default function ExpenseItem({ expense }: { expense: expense }) {
         <Button size="sm" variant="outline">
           Edit
         </Button>
-        <Button size="sm" variant="destructive">
+        <Button
+          size="sm"
+          variant="destructive"
+          onClick={() => onDeleteExpense?.(expense.id)}
+        >
           Delete
         </Button>
       </div>

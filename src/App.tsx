@@ -9,6 +9,8 @@ export default function App() {
   const [expense, setExpense] = useState<expense[]>([
     {
       // TODO: fill in the type fields
+      id: crypto.randomUUID(),
+
       title: "Groceries",
       amount: Number(70),
       date: "10-25-2026",
@@ -18,6 +20,10 @@ export default function App() {
 
   const handleAddExpense = (newExpense: expense) => {
     setExpense((prev) => [...prev, newExpense]);
+  };
+
+  const handleDeleteExpense = (id: string) => {
+    setExpense((prev) => prev.filter((expense) => expense.id !== id));
   };
 
   return (
@@ -32,7 +38,7 @@ export default function App() {
         </div>
       </main>
       <div className="p-6">
-        <ExpenseList expense={expense} />
+        <ExpenseList expense={expense} onDeleteExpense={handleDeleteExpense} />
       </div>
     </div>
   );

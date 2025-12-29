@@ -27,6 +27,7 @@ function ExpenseForm({ onAddExpense }: ExpenseFormProps) {
 
     const newExpense = {
       // TODO: fill in the type fields
+      id: crypto.randomUUID(),
       title,
       amount: Number(amount),
       date,
