@@ -1,17 +1,20 @@
 // src/components/ExpenseItem.tsx
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import type { expense } from "@/types/expense";
 
-export default function ExpenseItem() {
+export default function ExpenseItem({ expense }: { expense: expense }) {
   return (
     <Card className="p-4 flex justify-between items-center">
       <div className="space-y-1">
-        <h3 className="font-medium">Groceries</h3>
-        <p className="text-sm text-muted-foreground">Food • 2025-01-02</p>
+        <h3 className="font-medium">{expense.title}</h3>
+        <p className="text-sm text-muted-foreground">
+          {expense.category} • {expense.date}
+        </p>
       </div>
 
       <div className="flex items-center gap-4">
-        <span className="font-semibold">₦5,000</span>
+        <span className="font-semibold">${expense.amount}</span>
         <Button size="sm" variant="outline">
           Edit
         </Button>
