@@ -4,12 +4,16 @@ import type { expense } from "@/types/expense";
 
 type ExpenseListProps = {
   expense: expense[];
+  editingExpense: expense | null;
   onDeleteExpense?: (id: string) => void;
+  onEditExpense?: (expense: expense) => void;
 };
 
 export default function ExpenseList({
   expense,
+  editingExpense,
   onDeleteExpense,
+  onEditExpense,
 }: ExpenseListProps) {
   return (
     <div className="space-y-4 mt-6">
@@ -19,7 +23,9 @@ export default function ExpenseList({
           <ExpenseItem
             key={expenseItem.id}
             expense={expenseItem}
+            isEditing={editingExpense?.id === expenseItem.id}
             onDeleteExpense={onDeleteExpense}
+            onEditExpense={onEditExpense}
           />
         ))}
     </div>

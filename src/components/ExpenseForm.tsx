@@ -1,5 +1,5 @@
 // src/components/ExpenseForm.tsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -14,20 +14,40 @@ import type { expense } from "@/types/expense";
 
 type ExpenseFormProps = {
   onAddExpense: (expense: expense) => void;
+  editingExpense?: expense | null;
+  onCancelEdit: () => void;
 };
 
-function ExpenseForm({ onAddExpense }: ExpenseFormProps) {
+function ExpenseForm({
+  onAddExpense,
+  editingExpense,
+  onCancelEdit,
+}: ExpenseFormProps) {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState("");
   const [category, setCategory] = useState("");
+
+  useEffect(() => {
+    if (editingExpense) {
+      setTitle(editingExpense.title);
+      setAmount(editingExpense.amount.toString());
+      setDate(editingExpense.date);
+      setCategory(editingExpense.category);
+    } else {
+      setTitle("");
+      setAmount("");
+      setDate("");
+      setCategory("");
+    }
+  }, [editingExpense]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     const newExpense = {
       // TODO: fill in the type fields
-      id: crypto.randomUUID(),
+      id: editingExpense ? editingExpense.id : crypto.randomUUID(),
       title,
       amount: Number(amount),
       date,
@@ -45,7 +65,10 @@ function ExpenseForm({ onAddExpense }: ExpenseFormProps) {
 
   return (
     <Card className="p-6 w-full max-w-md">
-      <h2 className="text-lg font-semibold">Add / Edit Expense</h2>
+      <h2 className="text-lg font-semibold">
+        {editingExpense ? "Editing Expense" : "Add Expense"}
+      </h2>
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input
           placeholder="Title"
@@ -79,11 +102,18 @@ function ExpenseForm({ onAddExpense }: ExpenseFormProps) {
 
         <div className="flex gap-2">
           <Button type="submit" className="flex-1">
-            Add Expense
+            {editingExpense ? "Save Changes" : "Add Expense"}
           </Button>
-          <Button variant="outline" className="flex-1">
-            Cancel
-          </Button>
+          {editingExpense && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onCancelEdit}
+              className="flex-1"
+            >
+              Cancel Edit
+            </Button>
+          )}
         </div>
       </form>
     </Card>
