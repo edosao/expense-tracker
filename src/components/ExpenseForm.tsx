@@ -1,5 +1,5 @@
 // src/components/ExpenseForm.tsx
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -14,40 +14,20 @@ import type { expense } from "@/types/expense";
 
 type ExpenseFormProps = {
   onAddExpense: (expense: expense) => void;
-  editingExpense?: expense | null;
-  onCancelEdit: () => void;
 };
 
-function ExpenseForm({
-  onAddExpense,
-  editingExpense,
-  onCancelEdit,
-}: ExpenseFormProps) {
+function ExpenseForm({ onAddExpense }: ExpenseFormProps) {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState("");
   const [category, setCategory] = useState("");
-
-  useEffect(() => {
-    if (editingExpense) {
-      setTitle(editingExpense.title);
-      setAmount(editingExpense.amount.toString());
-      setDate(editingExpense.date);
-      setCategory(editingExpense.category);
-    } else {
-      setTitle("");
-      setAmount("");
-      setDate("");
-      setCategory("");
-    }
-  }, [editingExpense]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     const newExpense = {
       // TODO: fill in the type fields
-      id: editingExpense ? editingExpense.id : crypto.randomUUID(),
+      id: crypto.randomUUID(),
       title,
       amount: Number(amount),
       date,
@@ -64,59 +44,53 @@ function ExpenseForm({
   };
 
   return (
-    <Card className="p-6 w-full max-w-md">
-      <h2 className="text-lg font-semibold">
-        {editingExpense ? "Editing Expense" : "Add Expense"}
-      </h2>
+    <div>
+      <Card
+        className={`p-6 w-full max-w-md space-y-4 transition-all duration-300
+    ${"shadow-sm"}
+  `}
+      >
+        <h2 className="text-lg font-semibold">Add Expense</h2>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <Input
-          placeholder="Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <Input
-          placeholder="Amount"
-          type="number"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-        />
-        <Input
-          placeholder="Date"
-          type="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-        />
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <Input
+            placeholder="Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+          <Input
+            placeholder="Amount"
+            type="number"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+          />
+          <Input
+            placeholder="Date"
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+          />
 
-        <Select value={category} onValueChange={setCategory}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select Category" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="food">Food</SelectItem>
-            <SelectItem value="transport">Transport</SelectItem>
-            <SelectItem value="bills">Bills</SelectItem>
-            <SelectItem value="entertainment">Entertainment</SelectItem>
-          </SelectContent>
-        </Select>
+          <Select value={category} onValueChange={setCategory}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select Category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="food">Food</SelectItem>
+              <SelectItem value="transport">Transport</SelectItem>
+              <SelectItem value="bills">Bills</SelectItem>
+              <SelectItem value="entertainment">Entertainment</SelectItem>
+            </SelectContent>
+          </Select>
 
-        <div className="flex gap-2">
-          <Button type="submit" className="flex-1">
-            {editingExpense ? "Save Changes" : "Add Expense"}
-          </Button>
-          {editingExpense && (
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onCancelEdit}
-              className="flex-1"
-            >
-              Cancel Edit
+          <div className="flex gap-2">
+            <Button type="submit" className="flex-1">
+              Add Expense
             </Button>
-          )}
-        </div>
-      </form>
-    </Card>
+          </div>
+        </form>
+      </Card>
+    </div>
   );
 }
 
