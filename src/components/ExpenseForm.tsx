@@ -25,6 +25,8 @@ function ExpenseForm({ onAddExpense }: ExpenseFormProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!title || !amount || !date || !category) return;
+
     const newExpense = {
       // TODO: fill in the type fields
       id: crypto.randomUUID(),
@@ -58,12 +60,20 @@ function ExpenseForm({ onAddExpense }: ExpenseFormProps) {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
+
           <Input
             placeholder="Amount"
             type="number"
+            min="0"
+            step="1"
             value={amount}
-            onChange={(e) => setAmount(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (Number(value) < 0) return;
+              setAmount(value);
+            }}
           />
+
           <Input
             placeholder="Date"
             type="date"

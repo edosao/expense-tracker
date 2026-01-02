@@ -6,6 +6,7 @@ import ExpenseList from "./components/ExpenseList";
 import type { expense } from "./types/expense";
 
 export default function App() {
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [expense, setExpense] = useState<expense[]>(() => {
     const storedExpenses = localStorage.getItem("expenses");
     return storedExpenses
@@ -29,12 +30,22 @@ export default function App() {
     setExpense((prev) => [...prev, newExpense]);
   };
 
-  const handleEditExpense = (updated: expense) => {
-    setExpense((prev) => prev.map((e) => (e.id === updated.id ? updated : e)));
-  };
-
   const handleDeleteExpense = (id: string) => {
     setExpense((prev) => prev.filter((e) => e.id !== id));
+  };
+
+  const handleStartEditing = (id: string) => {
+    setEditingId(id);
+  };
+
+  const handleEditExpense = (updated: expense) => {
+    setExpense((prev) => prev.map((e) => (e.id === updated.id ? updated : e)));
+
+    setEditingId(null);
+  };
+
+  const handleCancelEditing = () => {
+    setEditingId(null);
   };
 
   return (
@@ -53,8 +64,11 @@ export default function App() {
       <div className="p-6">
         <ExpenseList
           expense={expense}
+          editingId={editingId}
           onDeleteExpense={handleDeleteExpense}
           onEditExpense={handleEditExpense}
+          onStartEditing={handleStartEditing}
+          onCancelEditing={handleCancelEditing}
         />
       </div>
     </div>

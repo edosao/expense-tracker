@@ -6,31 +6,36 @@ import type { expense } from "@/types/expense";
 
 type ExpenseItemProps = {
   expense: expense;
+  editingId: string | null;
   onDeleteExpense?: (id: string) => void;
   onSaveExpense?: (expense: expense) => void;
+  onStartEditing: (id: string) => void;
+  onCancelEditing: () => void;
 };
 
 export default function ExpenseItem({
   expense,
+  editingId,
   onDeleteExpense,
   onSaveExpense,
+  onStartEditing,
+  onCancelEditing,
 }: ExpenseItemProps) {
-  const [isEditing, setIsEditing] = useState(false);
   const [localExpense, setLocalExpense] = useState(expense);
 
   const handleSave = () => {
     onSaveExpense?.(localExpense);
-    setIsEditing(false);
+    onCancelEditing();
   };
 
   const handleCancel = () => {
-    setLocalExpense(expense); // rollback
-    setIsEditing(false);
+    // setLocalExpense(expense); // rollback
+    onCancelEditing();
   };
 
   return (
     <Card className="p-4 transition-all duration-300">
-      {isEditing ? (
+      {editingId === expense.id ? (
         <div className="space-y-3">
           <Input
             value={localExpense.title}
@@ -81,7 +86,7 @@ export default function ExpenseItem({
             <Button
               size="sm"
               variant="outline"
-              onClick={() => setIsEditing(true)}
+              onClick={() => onStartEditing?.(expense.id)}
             >
               Edit
             </Button>
