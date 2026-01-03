@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { Button } from "./components/ui/button";
+import { Card } from "./components/ui/card";
 import Header from "./components/Header";
 import ExpenseForm from "./components/ExpenseForm";
 import ExpenseSummary from "./components/ExpenseSummary";
@@ -52,11 +54,19 @@ export default function App() {
     <div className="min-h-screen bg-background text-foreground">
       <Header />
 
-      <main className="p-6 grid grid-cols-3 gap-6">
-        <div className="col-span-2">
-          <ExpenseForm onAddExpense={handleAddExpense} />
+      <main className="p-6 flex justify-between gap-6">
+        <div className="flex-1 max-w-[400px] ">
+          <Card className="p-6 space-y-4">
+            <div
+              className="overflow-hidden max-h-[350px] opacity-100
+              "
+            >
+              <ExpenseForm onAddExpense={handleAddExpense} />
+            </div>
+          </Card>
         </div>
-        <div className="col-span-1">
+
+        <div className="flex-1  min-h-[350px] max-w-[400px]">
           <ExpenseSummary expenses={expense} />
         </div>
       </main>

@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { expense } from "@/types/expense";
 
@@ -48,12 +49,10 @@ function ExpenseForm({ onAddExpense }: ExpenseFormProps) {
   return (
     <div>
       <Card
-        className={`p-6 w-full max-w-md space-y-4 transition-all duration-300
+        className={`p-5 w-full max-w-md space-y-4 transition-all duration-300
     ${"shadow-sm"}
   `}
       >
-        <h2 className="text-lg font-semibold">Add Expense</h2>
-
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
             placeholder="Title"
@@ -94,7 +93,8 @@ function ExpenseForm({ onAddExpense }: ExpenseFormProps) {
           </Select>
 
           <div className="flex gap-2">
-            <Button type="submit" className="flex-1">
+            <Button type="submit" className="w-full gap-2">
+              <PlusCircle className="h-4 w-4" />
               Add Expense
             </Button>
           </div>

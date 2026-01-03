@@ -1,16 +1,36 @@
 // src/components/Header.tsx
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/ThemeProvider";
+import { Moon, Sun, Wallet } from "lucide-react";
 
 export default function Header() {
   const { toggleTheme, theme } = useTheme();
 
   return (
-    <header className="flex justify-between items-center p-6 bg-card shadow-md">
-      <h1 className="text-2xl font-bold">Expense Tracker</h1>
-      <Button variant="outline" onClick={toggleTheme}>
-        {theme === "light" ? "Dark Mode" : "Light Mode"}
-      </Button>
+    <header className="sticky top-0 z-50 border-b bg-card/80 backdrop-blur">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+        {/* App title */}
+        <div className="flex items-center gap-2">
+          <Wallet className="h-6 w-6 text-primary" />
+          <h1 className="text-xl font-semibold tracking-tight">
+            Expense Tracker
+          </h1>
+        </div>
+
+        {/* Theme toggle */}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={toggleTheme}
+          aria-label="Toggle theme"
+        >
+          {theme === "light" ? (
+            <Moon className="h-5 w-5" />
+          ) : (
+            <Sun className="h-5 w-5" />
+          )}
+        </Button>
+      </div>
     </header>
   );
 }
