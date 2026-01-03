@@ -54,7 +54,7 @@ export default function App() {
     <div className="min-h-screen bg-background text-foreground">
       <Header />
 
-      <main className="p-6 flex justify-between gap-6">
+      <main className="p-6 flex justify-between flex-col-reverse lg:flex-row gap-6">
         <div className="flex-1 max-w-[400px] ">
           <Card className="p-6 space-y-4">
             <div
