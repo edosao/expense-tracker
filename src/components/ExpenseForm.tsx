@@ -11,10 +11,10 @@ import {
 } from "@/components/ui/select";
 import { PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { expense } from "@/types/expense";
+import type { Expense } from "@/types/expense";
 
 type ExpenseFormProps = {
-  onAddExpense: (expense: expense) => void;
+  onAddExpense: (expense: Expense) => void;
 };
 
 function ExpenseForm({ onAddExpense }: ExpenseFormProps) {

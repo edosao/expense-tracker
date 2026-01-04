@@ -3,13 +3,13 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Trash2, Edit, Tag } from "lucide-react";
-import type { expense } from "@/types/expense";
+import type { Expense } from "@/types/expense";
 
 type ExpenseItemProps = {
-  expense: expense;
+  expense: Expense;
   editingId: string | null;
   onDeleteExpense?: (id: string) => void;
-  onSaveExpense?: (expense: expense) => void;
+  onSaveExpense?: (expense: Expense) => void;
   onStartEditing: (id: string) => void;
   onCancelEditing: () => void;
 };
@@ -100,7 +100,7 @@ export default function ExpenseItem({
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="font-semibold">${expense.amount}</span>
+            <span className="font-semibold">${expense.amount.toFixed(2)}</span>
 
             <Button
               size="sm"

@@ -1,18 +1,18 @@
 import ExpenseItem from "./ExpenseItem";
-import type { expense } from "@/types/expense";
+import type { Expense } from "@/types/expense";
 import { Card } from "@/components/ui/card";
 
 type ExpenseListProps = {
-  expense: expense[];
+  expenses: Expense[];
   editingId: string | null;
   onDeleteExpense?: (id: string) => void;
-  onEditExpense?: (expense: expense) => void;
+  onEditExpense?: (expense: Expense) => void;
   onStartEditing: (id: string) => void;
   onCancelEditing: () => void;
 };
 
 export default function ExpenseList({
-  expense,
+  expenses,
   editingId,
   onDeleteExpense,
   onEditExpense,
@@ -25,13 +25,13 @@ export default function ExpenseList({
         <span className="text-primary">💰</span> Expenses
       </h2>
 
-      {expense.length === 0 ? (
+      {expenses.length === 0 ? (
         <Card className="p-4 text-center text-muted-foreground">
           No expenses added yet.
         </Card>
       ) : (
         <div className="space-y-3">
-          {expense.map((expenseItem) => (
+          {expenses.map((expenseItem) => (
             <ExpenseItem
               key={expenseItem.id}
               expense={expenseItem}

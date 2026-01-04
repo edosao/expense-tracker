@@ -1,6 +1,8 @@
 import { Card } from "@/components/ui/card";
-import type { expense } from "@/types/expense";
+import type { Expense } from "@/types/expense";
 import { BarChart3, Utensils, Car, Receipt, Clapperboard } from "lucide-react";
+
+type Category = "food" | "transport" | "bills" | "entertainment";
 
 const categoryIcons: Record<string, React.ReactNode> = {
   food: <Utensils className="h-4 w-4" />,
@@ -9,8 +11,13 @@ const categoryIcons: Record<string, React.ReactNode> = {
   entertainment: <Clapperboard className="h-4 w-4" />,
 };
 
-export default function ExpenseSummary({ expenses }: { expenses: expense[] }) {
-  const categories = ["food", "transport", "bills", "entertainment"];
+export default function ExpenseSummary({ expenses }: { expenses: Expense[] }) {
+  const categories: Category[] = [
+    "food",
+    "transport",
+    "bills",
+    "entertainment",
+  ];
 
   const totalAmount = expenses.reduce(
     (sum, expense) => sum + expense.amount,

@@ -4,11 +4,11 @@ import Header from "./components/Header";
 import ExpenseForm from "./components/ExpenseForm";
 import ExpenseSummary from "./components/ExpenseSummary";
 import ExpenseList from "./components/ExpenseList";
-import type { expense } from "./types/expense";
+import type { Expense } from "./types/expense";
 
 export default function App() {
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [expense, setExpense] = useState<expense[]>(() => {
+  const [expenses, setExpenses] = useState<Expense[]>(() => {
     const storedExpenses = localStorage.getItem("expenses");
     return storedExpenses
       ? JSON.parse(storedExpenses)
@@ -24,23 +24,23 @@ export default function App() {
   });
 
   useEffect(() => {
-    localStorage.setItem("expenses", JSON.stringify(expense));
-  }, [expense]);
+    localStorage.setItem("expenses", JSON.stringify(expenses));
+  }, [expenses]);
 
-  const handleAddExpense = (newExpense: expense) => {
-    setExpense((prev) => [...prev, newExpense]);
+  const handleAddExpense = (newExpense: Expense) => {
+    setExpenses((prev) => [...prev, newExpense]);
   };
 
   const handleDeleteExpense = (id: string) => {
-    setExpense((prev) => prev.filter((e) => e.id !== id));
+    setExpenses((prev) => prev.filter((e) => e.id !== id));
   };
 
   const handleStartEditing = (id: string) => {
     setEditingId(id);
   };
 
-  const handleEditExpense = (updated: expense) => {
-    setExpense((prev) => prev.map((e) => (e.id === updated.id ? updated : e)));
+  const handleEditExpense = (updated: Expense) => {
+    setExpenses((prev) => prev.map((e) => (e.id === updated.id ? updated : e)));
 
     setEditingId(null);
   };
@@ -66,13 +66,13 @@ export default function App() {
         </div>
 
         <div className="flex-1 w-full min-h-[350px] max-w-[400px] mt-3">
-          <ExpenseSummary expenses={expense} />
+          <ExpenseSummary expenses={expenses} />
         </div>
       </main>
 
       <div className="p-6">
         <ExpenseList
-          expense={expense}
+          expenses={expenses}
           editingId={editingId}
           onDeleteExpense={handleDeleteExpense}
           onEditExpense={handleEditExpense}
