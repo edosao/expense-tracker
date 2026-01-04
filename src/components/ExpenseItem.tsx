@@ -30,7 +30,7 @@ export default function ExpenseItem({
   };
 
   const handleCancel = () => {
-    setLocalExpense(expense); // rollback any changes
+    setLocalExpense(expense);
     onCancelEditing();
   };
 

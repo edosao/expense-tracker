@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Button } from "./components/ui/button";
 import { Card } from "./components/ui/card";
 import Header from "./components/Header";
 import ExpenseForm from "./components/ExpenseForm";
@@ -54,8 +53,8 @@ export default function App() {
     <div className="min-h-screen bg-background text-foreground">
       <Header />
 
-      <main className="p-6 flex justify-between flex-col-reverse lg:flex-row gap-6">
-        <div className="flex-1 max-w-[400px] ">
+      <main className="p-6 flex flex-col-reverse md:flex-row md:justify-evenly items-center gap-6">
+        <div className="w-full flex-1 max-w-[400px] ">
           <Card className="p-6 space-y-4">
             <div
               className="overflow-hidden max-h-[350px] opacity-100
@@ -66,7 +65,7 @@ export default function App() {
           </Card>
         </div>
 
-        <div className="flex-1  min-h-[350px] max-w-[400px]">
+        <div className="flex-1 w-full min-h-[350px] max-w-[400px] mt-3">
           <ExpenseSummary expenses={expense} />
         </div>
       </main>

@@ -22,6 +22,7 @@ function ExpenseForm({ onAddExpense }: ExpenseFormProps) {
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState("");
   const [category, setCategory] = useState("");
+  const isFormValid = title && amount && date && category;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,7 +30,6 @@ function ExpenseForm({ onAddExpense }: ExpenseFormProps) {
     if (!title || !amount || !date || !category) return;
 
     const newExpense = {
-      // TODO: fill in the type fields
       id: crypto.randomUUID(),
       title,
       amount: Number(amount),
@@ -39,7 +39,6 @@ function ExpenseForm({ onAddExpense }: ExpenseFormProps) {
 
     onAddExpense(newExpense);
 
-    // reset form
     setTitle("");
     setAmount("");
     setDate("");
@@ -84,7 +83,7 @@ function ExpenseForm({ onAddExpense }: ExpenseFormProps) {
             <SelectTrigger>
               <SelectValue placeholder="Select Category" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-popover text-popover-foreground shadow-lg border z-[9999]">
               <SelectItem value="food">Food</SelectItem>
               <SelectItem value="transport">Transport</SelectItem>
               <SelectItem value="bills">Bills</SelectItem>
@@ -93,7 +92,11 @@ function ExpenseForm({ onAddExpense }: ExpenseFormProps) {
           </Select>
 
           <div className="flex gap-2">
-            <Button type="submit" className="w-full gap-2">
+            <Button
+              type="submit"
+              className="w-full gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={!isFormValid}
+            >
               <PlusCircle className="h-4 w-4" />
               Add Expense
             </Button>

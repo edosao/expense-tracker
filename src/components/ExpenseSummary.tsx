@@ -28,8 +28,7 @@ export default function ExpenseSummary({ expenses }: { expenses: expense[] }) {
   }, {} as Record<string, number>);
 
   return (
-    <Card className="p-5 space-y-5">
-      {/* Header */}
+    <Card className="p-6 space-y-5">
       <div className="flex items-center gap-2">
         <BarChart3 className="h-5 w-5 text-primary" />
         <h2 className="text-lg font-semibold">Summary</h2>
