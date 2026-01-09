@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import type { Expense } from "@/types/expense";
 import { BarChart3, Utensils, Car, Receipt, Clapperboard } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 type Category = "food" | "transport" | "bills" | "entertainment";
 
@@ -44,7 +45,15 @@ export default function ExpenseSummary({ expenses }: { expenses: Expense[] }) {
       {/* Total */}
       <div className="rounded-lg bg-muted p-4 text-center">
         <p className="text-sm text-muted-foreground">Total Spending</p>
-        <p className="text-2xl font-bold">${totalAmount.toFixed(2)}</p>
+        <motion.p
+          key={totalAmount}
+          initial={{ opacity: 0, y: -5 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25 }}
+          className="text-2xl font-bold"
+        >
+          ${totalAmount.toFixed(2)}
+        </motion.p>
       </div>
 
       {/* Categories */}

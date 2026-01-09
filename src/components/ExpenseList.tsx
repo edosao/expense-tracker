@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import ExpenseItem from "./ExpenseItem";
 import type { Expense } from "@/types/expense";
 import { Card } from "@/components/ui/card";
@@ -10,6 +10,7 @@ import {
   DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
 import { SlidersHorizontal } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 
 type ExpenseListProps = {
   expenses: Expense[];
@@ -30,6 +31,16 @@ export default function ExpenseList({
 }: ExpenseListProps) {
   const categories = ["food", "transport", "bills", "entertainment"];
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const expenseRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  useEffect(() => {
+    if (expenses.length === 0) return;
+    const lastExpense = expenses[expenses.length - 1];
+    expenseRefs.current[lastExpense.id]?.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+  }, [expenses]);
 
   const toggleCategory = (category: string, checked: boolean) => {
     setSelectedCategories((prev) =>
@@ -74,19 +85,33 @@ export default function ExpenseList({
           No expenses added yet.
         </Card>
       ) : (
-        <div className="space-y-4">
-          {filteredExpenses.map((expenseItem) => (
-            <ExpenseItem
-              key={expenseItem.id}
-              expense={expenseItem}
-              editingId={editingId}
-              onDeleteExpense={onDeleteExpense}
-              onSaveExpense={onEditExpense}
-              onStartEditing={onStartEditing}
-              onCancelEditing={onCancelEditing}
-            />
-          ))}
-        </div>
+        <motion.div className="space-y-4">
+          <AnimatePresence>
+            {filteredExpenses.map((expenseItem) => (
+              <motion.div
+                key={expenseItem.id}
+                ref={(el) => {
+                  expenseRefs.current[expenseItem.id] = el;
+                }}
+                layout
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.18, ease: "easeOut" }}
+              >
+                <ExpenseItem
+                  key={expenseItem.id}
+                  expense={expenseItem}
+                  editingId={editingId}
+                  onDeleteExpense={onDeleteExpense}
+                  onSaveExpense={onEditExpense}
+                  onStartEditing={onStartEditing}
+                  onCancelEditing={onCancelEditing}
+                />
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </motion.div>
       )}
     </div>
   );
