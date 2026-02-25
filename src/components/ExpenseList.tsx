@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import ExpenseItem from "./ExpenseItem";
 import type { Expense } from "@/types/expense";
 import { Card } from "@/components/ui/card";
@@ -20,6 +21,15 @@ type ExpenseListProps = {
   onCancelEditing: () => void;
 };
 
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.05,
+    },
+  },
+};
+
 export default function ExpenseList({
   expenses,
   editingId,
@@ -33,7 +43,7 @@ export default function ExpenseList({
 
   const toggleCategory = (category: string, checked: boolean) => {
     setSelectedCategories((prev) =>
-      checked ? [...prev, category] : prev.filter((c) => c !== category)
+      checked ? [...prev, category] : prev.filter((c) => c !== category),
     );
   };
 
@@ -45,9 +55,8 @@ export default function ExpenseList({
   return (
     <div className="space-y-4">
       <div className="flex justify-between mb-4 border-b border-muted">
-        <h2 className="text-xl font-bold mb-3 pb-2 flex items-center gap-2">
-          💰Expenses
-        </h2>
+        <h2 className="text-xl font-bold mb-3 pb-2">💰 Expenses</h2>
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button size="icon" variant="outline" className="mr-6 mb-4">
@@ -70,23 +79,32 @@ export default function ExpenseList({
       </div>
 
       {filteredExpenses.length === 0 ? (
-        <Card className="p-4 text-center text-muted-foreground">
-          No expenses added yet.
-        </Card>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+          <Card className="p-4 text-center text-muted-foreground">
+            No expenses added yet.
+          </Card>
+        </motion.div>
       ) : (
-        <div className="space-y-4">
-          {filteredExpenses.map((expenseItem) => (
-            <ExpenseItem
-              key={expenseItem.id}
-              expense={expenseItem}
-              editingId={editingId}
-              onDeleteExpense={onDeleteExpense}
-              onSaveExpense={onEditExpense}
-              onStartEditing={onStartEditing}
-              onCancelEditing={onCancelEditing}
-            />
-          ))}
-        </div>
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="space-y-4"
+        >
+          <AnimatePresence mode="popLayout">
+            {filteredExpenses.map((expenseItem) => (
+              <ExpenseItem
+                key={expenseItem.id}
+                expense={expenseItem}
+                editingId={editingId}
+                onDeleteExpense={onDeleteExpense}
+                onSaveExpense={onEditExpense}
+                onStartEditing={onStartEditing}
+                onCancelEditing={onCancelEditing}
+              />
+            ))}
+          </AnimatePresence>
+        </motion.div>
       )}
     </div>
   );

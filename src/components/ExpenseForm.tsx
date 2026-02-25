@@ -1,5 +1,5 @@
-// src/components/ExpenseForm.tsx
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -22,12 +22,12 @@ function ExpenseForm({ onAddExpense }: ExpenseFormProps) {
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState("");
   const [category, setCategory] = useState("");
+
   const isFormValid = title && amount && date && category;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!title || !amount || !date || !category) return;
+    if (!isFormValid) return;
 
     const newExpense = {
       id: crypto.randomUUID(),
@@ -46,12 +46,12 @@ function ExpenseForm({ onAddExpense }: ExpenseFormProps) {
   };
 
   return (
-    <div>
-      <Card
-        className={`p-5 w-full max-w-md space-y-4 transition-all duration-300
-    ${"shadow-sm"}
-  `}
-      >
+    <motion.div
+      initial={{ opacity: 0, scale: 0.96 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.3 }}
+    >
+      <Card className="p-5 w-full max-w-md space-y-4">
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
             placeholder="Title"
@@ -63,13 +63,8 @@ function ExpenseForm({ onAddExpense }: ExpenseFormProps) {
             placeholder="Amount"
             type="number"
             min="0"
-            step="1"
             value={amount}
-            onChange={(e) => {
-              const value = e.target.value;
-              if (Number(value) < 0) return;
-              setAmount(value);
-            }}
+            onChange={(e) => setAmount(e.target.value)}
           />
 
           <Input
@@ -83,7 +78,7 @@ function ExpenseForm({ onAddExpense }: ExpenseFormProps) {
             <SelectTrigger>
               <SelectValue placeholder="Select Category" />
             </SelectTrigger>
-            <SelectContent className="bg-popover text-popover-foreground shadow-lg border z-[9999]">
+            <SelectContent>
               <SelectItem value="food">Food</SelectItem>
               <SelectItem value="transport">Transport</SelectItem>
               <SelectItem value="bills">Bills</SelectItem>
@@ -91,19 +86,19 @@ function ExpenseForm({ onAddExpense }: ExpenseFormProps) {
             </SelectContent>
           </Select>
 
-          <div className="flex gap-2">
+          <motion.div whileTap={{ scale: 0.95 }}>
             <Button
               type="submit"
-              className="w-full gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full gap-2"
               disabled={!isFormValid}
             >
               <PlusCircle className="h-4 w-4" />
               Add Expense
             </Button>
-          </div>
+          </motion.div>
         </form>
       </Card>
-    </div>
+    </motion.div>
   );
 }
 

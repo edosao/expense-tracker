@@ -20,6 +20,27 @@ export default function App() {
             date: "2026-10-25",
             category: "food",
           },
+          {
+            id: crypto.randomUUID(),
+            title: "Movie tickets",
+            amount: 50,
+            date: "2026-10-25",
+            category: "entertainment",
+          },
+          {
+            id: crypto.randomUUID(),
+            title: "Bus pass",
+            amount: 20,
+            date: "2026-10-25",
+            category: "transportation",
+          },
+          {
+            id: crypto.randomUUID(),
+            title: "Electricity bill",
+            amount: 1200,
+            date: "2026-10-25",
+            category: "bills",
+          },
         ];
   });
 
