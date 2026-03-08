@@ -1,52 +1,37 @@
 import { useEffect, useState } from "react";
 import { Card } from "./components/ui/card";
 import Header from "./components/Header";
+import Tabs from "./components/Tabs";
+import CategoryManager from "./components/CategoryManager";
 import ExpenseForm from "./components/ExpenseForm";
 import ExpenseSummary from "./components/ExpenseSummary";
 import ExpenseList from "./components/ExpenseList";
 import type { Expense } from "./types/expense";
 
 export default function App() {
+  const [activeTab, setActiveTab] = useState<"expenses" | "categories">(
+    "expenses",
+  );
+
+  const [categories, setCategories] = useState<string[]>(() => {
+    const storedCategories = localStorage.getItem("categories");
+    return storedCategories
+      ? JSON.parse(storedCategories)
+      : ["food", "transport", "bills", "entertainment"];
+  });
+
   const [editingId, setEditingId] = useState<string | null>(null);
+
   const [expenses, setExpenses] = useState<Expense[]>(() => {
     const storedExpenses = localStorage.getItem("expenses");
-    return storedExpenses
-      ? JSON.parse(storedExpenses)
-      : [
-          {
-            id: crypto.randomUUID(),
-            title: "Groceries",
-            amount: 70,
-            date: "2026-10-25",
-            category: "food",
-          },
-          {
-            id: crypto.randomUUID(),
-            title: "Movie tickets",
-            amount: 50,
-            date: "2026-10-25",
-            category: "entertainment",
-          },
-          {
-            id: crypto.randomUUID(),
-            title: "Bus pass",
-            amount: 20,
-            date: "2026-10-25",
-            category: "transportation",
-          },
-          {
-            id: crypto.randomUUID(),
-            title: "Electricity bill",
-            amount: 1200,
-            date: "2026-10-25",
-            category: "bills",
-          },
-        ];
+
+    return storedExpenses ? JSON.parse(storedExpenses) : [];
   });
 
   useEffect(() => {
+    localStorage.setItem("categories", JSON.stringify(categories));
     localStorage.setItem("expenses", JSON.stringify(expenses));
-  }, [expenses]);
+  }, [expenses, categories]);
 
   const handleAddExpense = (newExpense: Expense) => {
     setExpenses((prev) => [...prev, newExpense]);
@@ -62,7 +47,6 @@ export default function App() {
 
   const handleEditExpense = (updated: Expense) => {
     setExpenses((prev) => prev.map((e) => (e.id === updated.id ? updated : e)));
-
     setEditingId(null);
   };
 
@@ -70,37 +54,59 @@ export default function App() {
     setEditingId(null);
   };
 
+  const handleAddCategory = (category: string) => {
+    if (categories.includes(category.toLowerCase())) {
+      return false;
+    }
+
+    setCategories([...categories, category.toLowerCase()]);
+    return true;
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Header />
 
-      <main className="p-6 flex flex-col-reverse md:flex-row md:justify-evenly items-center gap-6">
-        <div className="w-full flex-1 max-w-[400px] ">
-          <Card className="p-6 space-y-4">
-            <div
-              className="overflow-hidden max-h-[350px] opacity-100
-              "
-            >
-              <ExpenseForm onAddExpense={handleAddExpense} />
+      <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
+
+      {activeTab === "expenses" && (
+        <>
+          <main className="p-6 flex flex-col-reverse md:flex-row md:justify-evenly items-center gap-6">
+            <div className="w-full flex-1 max-w-[400px]">
+              <Card className="p-6 space-y-4">
+                <ExpenseForm
+                  onAddExpense={handleAddExpense}
+                  categories={categories}
+                />
+              </Card>
             </div>
-          </Card>
-        </div>
 
-        <div className="flex-1 w-full min-h-[350px] max-w-[400px] mt-3">
-          <ExpenseSummary expenses={expenses} />
-        </div>
-      </main>
+            <div className="flex-1 w-full max-w-[400px] mt-3">
+              {categories.length > 0 && (
+                <ExpenseSummary expenses={expenses} categories={categories} />
+              )}
+            </div>
+          </main>
 
-      <div className="p-6">
-        <ExpenseList
-          expenses={expenses}
-          editingId={editingId}
-          onDeleteExpense={handleDeleteExpense}
-          onEditExpense={handleEditExpense}
-          onStartEditing={handleStartEditing}
-          onCancelEditing={handleCancelEditing}
+          <div className="p-6">
+            <ExpenseList
+              expenses={expenses}
+              editingId={editingId}
+              onDeleteExpense={handleDeleteExpense}
+              onEditExpense={handleEditExpense}
+              onStartEditing={handleStartEditing}
+              onCancelEditing={handleCancelEditing}
+            />
+          </div>
+        </>
+      )}
+
+      {activeTab === "categories" && (
+        <CategoryManager
+          categories={categories}
+          onAddCategory={handleAddCategory}
         />
-      </div>
+      )}
     </div>
   );
 }

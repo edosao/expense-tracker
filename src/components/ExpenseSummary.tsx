@@ -2,7 +2,7 @@ import { Card } from "@/components/ui/card";
 import type { Expense } from "@/types/expense";
 import { BarChart3, Utensils, Car, Receipt, Clapperboard } from "lucide-react";
 
-type Category = "food" | "transport" | "bills" | "entertainment";
+// type Category = "food" | "transport" | "bills" | "entertainment";
 
 const categoryIcons: Record<string, React.ReactNode> = {
   food: <Utensils className="h-4 w-4" />,
@@ -11,31 +11,43 @@ const categoryIcons: Record<string, React.ReactNode> = {
   entertainment: <Clapperboard className="h-4 w-4" />,
 };
 
-export default function ExpenseSummary({ expenses }: { expenses: Expense[] }) {
-  const categories: Category[] = [
-    "food",
-    "transport",
-    "bills",
-    "entertainment",
-  ];
+export default function ExpenseSummary({
+  expenses,
+  categories,
+}: {
+  expenses: Expense[];
+  categories: string[];
+}) {
+  // const categories: Category[] = [
+  //   "food",
+  //   "transport",
+  //   "bills",
+  //   "entertainment",
+  // ];
 
   const totalAmount = expenses.reduce(
     (sum, expense) => sum + expense.amount,
-    0
+    0,
   );
 
-  const categoryTotals = expenses.reduce((acc, expense) => {
-    acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
-    return acc;
-  }, {} as Record<string, number>);
+  const categoryTotals = expenses.reduce(
+    (acc, expense) => {
+      acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
 
-  const allCategoryTotals = categories.reduce((acc, category) => {
-    acc[category] = categoryTotals[category] || 0;
-    return acc;
-  }, {} as Record<string, number>);
+  const allCategoryTotals = categories.reduce(
+    (acc, category) => {
+      acc[category] = categoryTotals[category] || 0;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
 
   return (
-    <Card className="p-6 space-y-5">
+    <Card className="p-6 space-y-5  max-h-[340px] overflow-y-auto">
       <div className="flex items-center gap-2">
         <BarChart3 className="h-5 w-5 text-primary" />
         <h2 className="text-lg font-semibold">Summary</h2>
@@ -56,7 +68,7 @@ export default function ExpenseSummary({ expenses }: { expenses: Expense[] }) {
           >
             <div className="flex items-center gap-2">
               <span className="text-muted-foreground">
-                {categoryIcons[category]}
+                {categoryIcons[category] ?? <BarChart3 className="h-4 w-4" />}
               </span>
               <span className="capitalize">{category}</span>
             </div>
