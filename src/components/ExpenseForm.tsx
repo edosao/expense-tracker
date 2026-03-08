@@ -24,8 +24,6 @@ function ExpenseForm({ onAddExpense, categories = [] }: ExpenseFormProps) {
   const [date, setDate] = useState("");
   const [category, setCategory] = useState("");
 
-  const isFormValid = title && amount && date && category;
-
   const [error, setError] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
