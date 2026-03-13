@@ -15,19 +15,24 @@ import type { Expense } from "@/types/expense";
 
 type ExpenseFormProps = {
   onAddExpense: (expense: Expense) => void;
+  categories: string[];
 };
 
-function ExpenseForm({ onAddExpense }: ExpenseFormProps) {
+function ExpenseForm({ onAddExpense, categories = [] }: ExpenseFormProps) {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState("");
   const [category, setCategory] = useState("");
 
-  const isFormValid = title && amount && date && category;
+  const [error, setError] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isFormValid) return;
+
+    if (!title || !amount || !date || !category) {
+      setError("Please fill all fields including category");
+      return;
+    }
 
     const newExpense = {
       id: crypto.randomUUID(),
@@ -43,6 +48,7 @@ function ExpenseForm({ onAddExpense }: ExpenseFormProps) {
     setAmount("");
     setDate("");
     setCategory("");
+    setError("");
   };
 
   return (
@@ -79,18 +85,21 @@ function ExpenseForm({ onAddExpense }: ExpenseFormProps) {
               <SelectValue placeholder="Select Category" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="food">Food</SelectItem>
-              <SelectItem value="transport">Transport</SelectItem>
-              <SelectItem value="bills">Bills</SelectItem>
-              <SelectItem value="entertainment">Entertainment</SelectItem>
+              {categories.map((cat: string) => (
+                <SelectItem key={cat} value={cat}>
+                  {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
+
+          {error && <p className="text-sm text-red-500">{error}</p>}
 
           <motion.div whileTap={{ scale: 0.95 }}>
             <Button
               type="submit"
               className="w-full gap-2"
-              disabled={!isFormValid}
+              // disabled={!isFormValid}
             >
               <PlusCircle className="h-4 w-4" />
               Add Expense
