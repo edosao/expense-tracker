@@ -80,15 +80,7 @@ function ExpenseForm({ onAddExpense, categories = [] }: ExpenseFormProps) {
             onChange={(e) => setDate(e.target.value)}
           />
 
-          <Select
-            value={category}
-            onValueChange={
-              setCategory /*onValueChange={(value) => {
-  setCategory(value);
-  setError("");
-}}*/
-            }
-          >
+          <Select value={category} onValueChange={setCategory}>
             <SelectTrigger>
               <SelectValue placeholder="Select Category" />
             </SelectTrigger>
@@ -98,11 +90,6 @@ function ExpenseForm({ onAddExpense, categories = [] }: ExpenseFormProps) {
                   {cat.charAt(0).toUpperCase() + cat.slice(1)}
                 </SelectItem>
               ))}
-
-              {/* <SelectItem value="food">Food</SelectItem>
-              <SelectItem value="transport">Transport</SelectItem>
-              <SelectItem value="bills">Bills</SelectItem>
-              <SelectItem value="entertainment">Entertainment</SelectItem> */}
             </SelectContent>
           </Select>
 

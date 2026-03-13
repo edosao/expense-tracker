@@ -59,14 +59,6 @@ export default function CategoryManager({
               </Button>
             </div>
           ))}
-
-          {/* <div className="flex justify-between items-center border rounded-md p-2">
-            <span className="capitalize">transport</span>
-
-            <Button size="icon" variant="destructive">
-              <Trash2 className="w-4 h-4" />
-            </Button>
-          </div> */}
         </div>
       </Card>
     </div>
