@@ -14,6 +14,7 @@ import { SlidersHorizontal } from "lucide-react";
 
 type ExpenseListProps = {
   expenses: Expense[];
+  categories: string[];
   editingId: string | null;
   onDeleteExpense?: (id: string) => void;
   onEditExpense?: (expense: Expense) => void;
@@ -32,13 +33,13 @@ const containerVariants = {
 
 export default function ExpenseList({
   expenses,
+  categories,
   editingId,
   onDeleteExpense,
   onEditExpense,
   onCancelEditing,
   onStartEditing,
 }: ExpenseListProps) {
-  const categories = ["food", "transport", "bills", "entertainment"];
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   const toggleCategory = (category: string, checked: boolean) => {

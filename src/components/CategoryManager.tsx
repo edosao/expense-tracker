@@ -1,16 +1,22 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Trash2 } from "lucide-react";
 import { useState } from "react";
+import CategoryList from "./CategoryList";
+
+type CategoryManagerProps = {
+  categories: string[];
+  onAddCategory: (category: string) => void | boolean;
+  onDeleteCategory: (category: string) => void;
+  onEditCategory: (oldCategory: string, newCategory: string) => void;
+};
 
 export default function CategoryManager({
   categories,
   onAddCategory,
-}: {
-  categories: string[];
-  onAddCategory: (category: string) => void | boolean;
-}) {
+  onDeleteCategory,
+  onEditCategory,
+}: CategoryManagerProps) {
   const [newCategory, setNewCategory] = useState("");
   const [error, setError] = useState("");
   return (
@@ -47,18 +53,11 @@ export default function CategoryManager({
         </div>
 
         <div className="space-y-2">
-          {categories.map((cat) => (
-            <div
-              key={cat}
-              className="flex justify-between items-center border rounded-md p-2"
-            >
-              <span className="capitalize">{cat}</span>
-
-              <Button size="icon" variant="destructive">
-                <Trash2 className="w-4 h-4" />
-              </Button>
-            </div>
-          ))}
+          <CategoryList
+            categories={categories}
+            onDeleteCategory={onDeleteCategory}
+            onEditCategory={onEditCategory}
+          />
         </div>
       </Card>
     </div>

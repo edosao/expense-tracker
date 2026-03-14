@@ -63,6 +63,24 @@ export default function App() {
     return true;
   };
 
+  const handleDeleteCategory = (category: string) => {
+    setCategories((prev) => prev.filter((c) => c !== category));
+
+    setExpenses((prev) =>
+      prev.filter((expense) => expense.category !== category),
+    );
+  };
+
+  const handleEditCategory = (oldCategory: string, newCategory: string) => {
+    setCategories((prev) =>
+      prev.map((c) => (c === oldCategory ? newCategory : c)),
+    );
+
+    setExpenses((prev) =>
+      prev.filter((expense) => expense.category !== oldCategory),
+    );
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Header />
@@ -96,6 +114,7 @@ export default function App() {
               onEditExpense={handleEditExpense}
               onStartEditing={handleStartEditing}
               onCancelEditing={handleCancelEditing}
+              categories={categories}
             />
           </div>
         </>
@@ -105,6 +124,8 @@ export default function App() {
         <CategoryManager
           categories={categories}
           onAddCategory={handleAddCategory}
+          onDeleteCategory={handleDeleteCategory}
+          onEditCategory={handleEditCategory}
         />
       )}
     </div>
