@@ -50,12 +50,15 @@ const CategoryList = ({
         >
           {selectedCategory !== cat && !isEditing ? (
             <>
-              <span className="capitalize">{cat}</span>
+              <span className="capitalize">
+                {cat === "other" ? "Other (default)" : cat}
+              </span>
 
               <div className="flex gap-2">
                 <Button
                   size="icon"
                   variant="outline"
+                  disabled={cat === "other"}
                   onClick={() => handleSelectCategory(cat)}
                 >
                   <Edit2Icon className="w-4 h-4" />
@@ -64,6 +67,7 @@ const CategoryList = ({
                 <Button
                   size="icon"
                   variant="destructive"
+                  disabled={cat === "other"}
                   onClick={() => handleDeleteCategory(cat)}
                 >
                   <Trash2 className="w-4 h-4" />

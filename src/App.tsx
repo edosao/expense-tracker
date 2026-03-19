@@ -15,9 +15,12 @@ export default function App() {
 
   const [categories, setCategories] = useState<string[]>(() => {
     const storedCategories = localStorage.getItem("categories");
-    return storedCategories
+
+    const base = storedCategories
       ? JSON.parse(storedCategories)
       : ["food", "transport", "bills", "entertainment"];
+
+    return base.includes("other") ? base : [...base, "other"];
   });
 
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -64,20 +67,36 @@ export default function App() {
   };
 
   const handleDeleteCategory = (category: string) => {
+    if (category === "other") return;
+
     setCategories((prev) => prev.filter((c) => c !== category));
 
     setExpenses((prev) =>
-      prev.filter((expense) => expense.category !== category),
+      prev.map((expense) =>
+        expense.category === category
+          ? { ...expense, category: "other" }
+          : expense,
+      ),
     );
   };
 
   const handleEditCategory = (oldCategory: string, newCategory: string) => {
+    if (oldCategory === "other") return;
+
+    const formattedCategory = newCategory.trim().toLowerCase();
+
+    if (!formattedCategory || formattedCategory === "other") return;
+
     setCategories((prev) =>
-      prev.map((c) => (c === oldCategory ? newCategory : c)),
+      prev.map((c) => (c === oldCategory ? formattedCategory : c)),
     );
 
     setExpenses((prev) =>
-      prev.filter((expense) => expense.category !== oldCategory),
+      prev.map((expense) =>
+        expense.category === oldCategory
+          ? { ...expense, category: formattedCategory }
+          : expense,
+      ),
     );
   };
 
