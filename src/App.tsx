@@ -15,9 +15,12 @@ export default function App() {
 
   const [categories, setCategories] = useState<string[]>(() => {
     const storedCategories = localStorage.getItem("categories");
-    return storedCategories
+
+    const base = storedCategories
       ? JSON.parse(storedCategories)
       : ["food", "transport", "bills", "entertainment"];
+
+    return base.includes("other") ? base : [...base, "other"];
   });
 
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -63,6 +66,40 @@ export default function App() {
     return true;
   };
 
+  const handleDeleteCategory = (category: string) => {
+    if (category === "other") return;
+
+    setCategories((prev) => prev.filter((c) => c !== category));
+
+    setExpenses((prev) =>
+      prev.map((expense) =>
+        expense.category === category
+          ? { ...expense, category: "other" }
+          : expense,
+      ),
+    );
+  };
+
+  const handleEditCategory = (oldCategory: string, newCategory: string) => {
+    if (oldCategory === "other") return;
+
+    const formattedCategory = newCategory.trim().toLowerCase();
+
+    if (!formattedCategory || formattedCategory === "other") return;
+
+    setCategories((prev) =>
+      prev.map((c) => (c === oldCategory ? formattedCategory : c)),
+    );
+
+    setExpenses((prev) =>
+      prev.map((expense) =>
+        expense.category === oldCategory
+          ? { ...expense, category: formattedCategory }
+          : expense,
+      ),
+    );
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Header />
@@ -96,6 +133,7 @@ export default function App() {
               onEditExpense={handleEditExpense}
               onStartEditing={handleStartEditing}
               onCancelEditing={handleCancelEditing}
+              categories={categories}
             />
           </div>
         </>
@@ -105,6 +143,8 @@ export default function App() {
         <CategoryManager
           categories={categories}
           onAddCategory={handleAddCategory}
+          onDeleteCategory={handleDeleteCategory}
+          onEditCategory={handleEditCategory}
         />
       )}
     </div>
