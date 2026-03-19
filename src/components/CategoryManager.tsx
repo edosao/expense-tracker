@@ -6,7 +6,7 @@ import CategoryList from "./CategoryList";
 
 type CategoryManagerProps = {
   categories: string[];
-  onAddCategory: (category: string) => void | boolean;
+  onAddCategory: (category: string) => void;
   onDeleteCategory: (category: string) => void;
   onEditCategory: (oldCategory: string, newCategory: string) => void;
 };
@@ -34,16 +34,15 @@ export default function CategoryManager({
           <Button
             onClick={() => {
               const trimmed = newCategory.trim().toLowerCase();
-
               if (!trimmed) return;
 
-              const success = onAddCategory(trimmed);
-
-              if (!success) {
+              // Call the callback; handle duplicates internally via state
+              if (categories.includes(trimmed)) {
                 setError("Category already exists");
                 return;
               }
 
+              onAddCategory(trimmed); // now returns void
               setError("");
               setNewCategory("");
             }}
