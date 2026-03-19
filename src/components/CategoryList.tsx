@@ -14,9 +14,8 @@ const CategoryList = ({
   onDeleteCategory,
   onEditCategory,
 }: CategoryListProps) => {
-  const [isEditing, setIsEditing] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [editedValue, setEditedValue] = useState(""); // New state for input
+  const [editedValue, setEditedValue] = useState("");
 
   const handleSelectCategory = (cat: string) => {
     setSelectedCategory(cat);
@@ -48,7 +47,31 @@ const CategoryList = ({
           key={cat}
           className="flex justify-between items-center border rounded-md p-2 mb-2"
         >
-          {selectedCategory !== cat && !isEditing ? (
+          {selectedCategory === cat ? (
+            <>
+              <Input
+                value={editedValue}
+                onChange={(e) => setEditedValue(e.target.value)}
+                className="max-w-[150px]"
+              />
+
+              <div className="flex gap-2">
+                <Button size="icon" variant="default" onClick={handleSaveEdit}>
+                  <Check className="w-4 h-4" />
+                </Button>
+
+                <Button
+                  size="icon"
+                  variant="secondary"
+                  onClick={() => {
+                    handleCancelEdit();
+                  }}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+            </>
+          ) : (
             <>
               <span className="capitalize">
                 {cat === "other" ? "Other (default)" : cat}
@@ -71,31 +94,6 @@ const CategoryList = ({
                   onClick={() => handleDeleteCategory(cat)}
                 >
                   <Trash2 className="w-4 h-4" />
-                </Button>
-              </div>
-            </>
-          ) : (
-            <>
-              <Input
-                value={editedValue}
-                onChange={(e) => setEditedValue(e.target.value)}
-                className="max-w-[150px]"
-              />
-
-              <div className="flex gap-2">
-                <Button size="icon" variant="default" onClick={handleSaveEdit}>
-                  <Check className="w-4 h-4" />
-                </Button>
-
-                <Button
-                  size="icon"
-                  variant="secondary"
-                  onClick={() => {
-                    setIsEditing(false);
-                    handleCancelEdit();
-                  }}
-                >
-                  <X className="w-4 h-4" />
                 </Button>
               </div>
             </>
