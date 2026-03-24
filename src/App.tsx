@@ -33,8 +33,11 @@ export default function App() {
 
   useEffect(() => {
     localStorage.setItem("categories", JSON.stringify(categories));
+  }, [categories]);
+
+  useEffect(() => {
     localStorage.setItem("expenses", JSON.stringify(expenses));
-  }, [expenses, categories]);
+  }, [expenses]);
 
   const handleAddExpense = (newExpense: Expense) => {
     setExpenses((prev) => [...prev, newExpense]);
