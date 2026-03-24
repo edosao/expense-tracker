@@ -6,12 +6,10 @@ import CategoryManager from "./components/CategoryManager";
 import ExpenseForm from "./components/ExpenseForm";
 import ExpenseSummary from "./components/ExpenseSummary";
 import ExpenseList from "./components/ExpenseList";
-import type { Expense } from "./types/expense";
+import type { ActiveTab, Expense } from "./types/expense";
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<"expenses" | "categories">(
-    "expenses",
-  );
+  const [activeTab, setActiveTab] = useState<ActiveTab>("expenses");
 
   const [categories, setCategories] = useState<string[]>(() => {
     const storedCategories = localStorage.getItem("categories");
@@ -33,8 +31,11 @@ export default function App() {
 
   useEffect(() => {
     localStorage.setItem("categories", JSON.stringify(categories));
+  }, [categories]);
+
+  useEffect(() => {
     localStorage.setItem("expenses", JSON.stringify(expenses));
-  }, [expenses, categories]);
+  }, [expenses]);
 
   const handleAddExpense = (newExpense: Expense) => {
     setExpenses((prev) => [...prev, newExpense]);

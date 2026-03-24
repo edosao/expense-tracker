@@ -5,3 +5,5 @@ export type Expense = {
   date: string;
   category: string;
 };
+
+export type ActiveTab = "expenses" | "categories";

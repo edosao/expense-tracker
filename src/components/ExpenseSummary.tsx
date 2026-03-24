@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import type { Expense } from "@/types/expense";
 import { BarChart3, Utensils, Car, Receipt, Clapperboard } from "lucide-react";
+import { getTotalByCategory, getTotalExpenses } from "@/utils/expense";
 
 const categoryIcons: Record<string, React.ReactNode> = {
   food: <Utensils className="h-4 w-4" />,
@@ -16,22 +17,11 @@ export default function ExpenseSummary({
   expenses: Expense[];
   categories: string[];
 }) {
-  const totalAmount = expenses.reduce(
-    (sum, expense) => sum + expense.amount,
-    0,
-  );
-
-  const categoryTotals = expenses.reduce(
-    (acc, expense) => {
-      acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
-      return acc;
-    },
-    {} as Record<string, number>,
-  );
+  const totalAmount = getTotalExpenses(expenses);
 
   const allCategoryTotals = categories.reduce(
     (acc, category) => {
-      acc[category] = categoryTotals[category] || 0;
+      acc[category] = getTotalByCategory(expenses, category);
       return acc;
     },
     {} as Record<string, number>,
