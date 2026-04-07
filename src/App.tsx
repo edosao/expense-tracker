@@ -10,6 +10,8 @@ import type { ActiveTab, Expense } from "./types/expense";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>("expenses");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   const [categories, setCategories] = useState<string[]>(() => {
     const storedCategories = localStorage.getItem("categories");
@@ -101,6 +103,24 @@ export default function App() {
     );
   };
 
+  const toggleCategory = (category: string, checked: boolean) => {
+    setSelectedCategories((prev) =>
+      checked ? [...prev, category] : prev.filter((c) => c !== category),
+    );
+  };
+
+  const filteredExpenses = expenses.filter((exp) => {
+    const matchesCategory =
+      selectedCategories.length === 0 ||
+      selectedCategories.includes(exp.category);
+
+    const matchesSearch = exp.title
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+
+    return matchesCategory && matchesSearch;
+  });
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Header />
@@ -134,7 +154,12 @@ export default function App() {
               onEditExpense={handleEditExpense}
               onStartEditing={handleStartEditing}
               onCancelEditing={handleCancelEditing}
+              onToggleCategory={toggleCategory}
               categories={categories}
+              selectedCategories={selectedCategories}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              filteredExpenses={filteredExpenses}
             />
           </div>
         </>

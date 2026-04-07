@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ExpenseItem from "./ExpenseItem";
 import type { Expense } from "@/types/expense";
@@ -17,10 +16,15 @@ type ExpenseListProps = {
   expenses: Expense[];
   categories: string[];
   editingId: string | null;
+  selectedCategories: string[];
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
   onDeleteExpense?: (id: string) => void;
   onEditExpense?: (expense: Expense) => void;
   onStartEditing: (id: string) => void;
   onCancelEditing: () => void;
+  onToggleCategory?: (category: string, checked: boolean) => void;
+  filteredExpenses: Expense[];
 };
 
 const containerVariants = {
@@ -33,35 +37,18 @@ const containerVariants = {
 };
 
 export default function ExpenseList({
-  expenses,
   categories,
   editingId,
+  searchQuery,
+  selectedCategories,
   onDeleteExpense,
   onEditExpense,
   onCancelEditing,
+  onToggleCategory,
   onStartEditing,
+  filteredExpenses,
+  setSearchQuery,
 }: ExpenseListProps) {
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const toggleCategory = (category: string, checked: boolean) => {
-    setSelectedCategories((prev) =>
-      checked ? [...prev, category] : prev.filter((c) => c !== category),
-    );
-  };
-
-  const filteredExpenses = expenses.filter((exp) => {
-    const matchesCategory =
-      selectedCategories.length === 0 ||
-      selectedCategories.includes(exp.category);
-
-    const matchesSearch = exp.title
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
-
-    return matchesCategory && matchesSearch;
-  });
-
   return (
     <div className="space-y-4">
       <div className="flex justify-between mb-4 border-b border-muted">
@@ -92,7 +79,7 @@ export default function ExpenseList({
                   key={category}
                   checked={selectedCategories.includes(category)}
                   onCheckedChange={(checked) =>
-                    toggleCategory(category, checked)
+                    onToggleCategory?.(category, checked)
                   }
                 >
                   <span className="capitalize">{category}</span>
