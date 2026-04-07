@@ -75,9 +75,9 @@ export default function ExpenseItem({
 
             <Input
               type="date"
-              value={localExpense.date}
+              value={localExpense.createdAt}
               onChange={(e) =>
-                setLocalExpense({ ...localExpense, date: e.target.value })
+                setLocalExpense({ ...localExpense, createdAt: e.target.value })
               }
             />
 
@@ -108,7 +108,7 @@ export default function ExpenseItem({
                 {expense.title}
               </h3>
               <p className="text-sm text-muted-foreground">
-                {expense.category} • {expense.date}
+                {expense.category} • {expense.createdAt}
               </p>
             </div>
 
