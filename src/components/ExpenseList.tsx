@@ -17,10 +17,15 @@ type ExpenseListProps = {
   expenses: Expense[];
   categories: string[];
   editingId: string | null;
+  selectedCategories: string[];
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
   onDeleteExpense?: (id: string) => void;
   onEditExpense?: (expense: Expense) => void;
   onStartEditing: (id: string) => void;
   onCancelEditing: () => void;
+  onToggleCategory?: (category: string, checked: boolean) => void;
+  filteredExpenses: Expense[];
 };
 
 const containerVariants = {
@@ -33,56 +38,62 @@ const containerVariants = {
 };
 
 export default function ExpenseList({
-  expenses,
   categories,
   editingId,
+  searchQuery,
+  selectedCategories,
   onDeleteExpense,
   onEditExpense,
   onCancelEditing,
+  onToggleCategory,
   onStartEditing,
+  filteredExpenses,
+  setSearchQuery,
 }: ExpenseListProps) {
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<string>("Newest");
 
   const sortOptions = ["Newest", "Oldest", "Highest Amount", "Lowest Amount"];
 
-  const toggleCategory = (category: string, checked: boolean) => {
-    setSelectedCategories((prev) =>
-      checked ? [...prev, category] : prev.filter((c) => c !== category),
+  const sortByNewest = () => {
+    return [...filteredExpenses].sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
     );
   };
 
-  const filteredExpenses = expenses.filter((exp) => {
-    const matchesCategory =
-      selectedCategories.length === 0 ||
-      selectedCategories.includes(exp.category);
+  const sortByOldest = () => {
+    return [...filteredExpenses].sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+    );
+  };
 
-    const matchesSearch = exp.title
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
+  const sortByHighestAmount = () => {
+    return [...filteredExpenses].sort((a, b) => b.amount - a.amount);
+  };
 
-    return matchesCategory && matchesSearch;
-  });
+  const sortByLowestAmount = () => {
+    return [...filteredExpenses].sort((a, b) => a.amount - b.amount);
+  };
 
-  const sortedExpenses = [...filteredExpenses].sort((a, b) => {
+  const handleSorting = (option: string) => {
+    setSortBy(option);
+  };
+
+  const getSortedExpenses = () => {
     switch (sortBy) {
       case "Newest":
-        return new Date(b.date).getTime() - new Date(a.date).getTime();
-
+        return sortByNewest();
       case "Oldest":
-        return new Date(a.date).getTime() - new Date(b.date).getTime();
-
+        return sortByOldest();
       case "Highest Amount":
-        return b.amount - a.amount;
-
+        return sortByHighestAmount();
       case "Lowest Amount":
-        return a.amount - b.amount;
-
+        return sortByLowestAmount();
       default:
-        return 0;
+        return filteredExpenses;
     }
-  });
+  };
+
+  const sortedExpenses = getSortedExpenses();
 
   return (
     <div className="space-y-4">
@@ -110,7 +121,7 @@ export default function ExpenseList({
                 <DropdownMenuCheckboxItem
                   key={option}
                   checked={sortBy === option}
-                  onCheckedChange={() => setSortBy(option)}
+                  onCheckedChange={() => handleSorting(option)}
                 >
                   <span>{option}</span>
                 </DropdownMenuCheckboxItem>
@@ -131,7 +142,7 @@ export default function ExpenseList({
                   key={category}
                   checked={selectedCategories.includes(category)}
                   onCheckedChange={(checked) =>
-                    toggleCategory(category, checked)
+                    onToggleCategory?.(category, checked)
                   }
                 >
                   <span className="capitalize">{category}</span>
