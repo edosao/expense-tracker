@@ -56,13 +56,15 @@ export default function ExpenseList({
 
   const sortByNewest = () => {
     return [...filteredExpenses].sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     );
   };
 
   const sortByOldest = () => {
     return [...filteredExpenses].sort(
-      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+      (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
     );
   };
 
@@ -76,6 +78,7 @@ export default function ExpenseList({
 
   const handleSorting = (option: string) => {
     setSortBy(option);
+    console.log(filteredExpenses);
   };
 
   const getSortedExpenses = () => {

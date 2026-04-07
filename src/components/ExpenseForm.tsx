@@ -38,7 +38,7 @@ function ExpenseForm({ onAddExpense, categories = [] }: ExpenseFormProps) {
       id: crypto.randomUUID(),
       title,
       amount: Number(amount),
-      date,
+      createdAt: new Date().toISOString(),
       category,
     };
 
