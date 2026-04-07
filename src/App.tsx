@@ -12,6 +12,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>("expenses");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedMonth, setSelectedMonth] = useState<string>("all");
 
   const [categories, setCategories] = useState<string[]>(() => {
     const storedCategories = localStorage.getItem("categories");
@@ -110,15 +111,19 @@ export default function App() {
   };
 
   const filteredExpenses = expenses.filter((exp) => {
-    const matchesCategory =
-      selectedCategories.length === 0 ||
-      selectedCategories.includes(exp.category);
-
     const matchesSearch = exp.title
       .toLowerCase()
       .includes(searchQuery.toLowerCase());
 
-    return matchesCategory && matchesSearch;
+    const matchesCategory =
+      selectedCategories.length === 0 ||
+      selectedCategories.includes(exp.category);
+
+    const matchesMonth =
+      selectedMonth === "all" || exp.createdAt.startsWith(selectedMonth);
+    // "2026-04" matches "2026-04-07T..."
+
+    return matchesSearch && matchesCategory && matchesMonth;
   });
 
   return (
@@ -141,7 +146,11 @@ export default function App() {
 
             <div className="flex-1 w-full max-w-[400px] mt-3">
               {categories.length > 0 && (
-                <ExpenseSummary expenses={expenses} categories={categories} />
+                <ExpenseSummary
+                  expenses={expenses}
+                  filteredExpenses={filteredExpenses}
+                  categories={categories}
+                />
               )}
             </div>
           </main>
@@ -160,6 +169,8 @@ export default function App() {
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
               filteredExpenses={filteredExpenses}
+              selectedMonth={selectedMonth}
+              onSelectedMonth={setSelectedMonth}
             />
           </div>
         </>

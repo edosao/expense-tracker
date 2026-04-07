@@ -75,9 +75,12 @@ export default function ExpenseItem({
 
             <Input
               type="date"
-              value={localExpense.createdAt}
+              value={localExpense.createdAt.split("T")[0]}
               onChange={(e) =>
-                setLocalExpense({ ...localExpense, createdAt: e.target.value })
+                setLocalExpense({
+                  ...localExpense,
+                  createdAt: new Date(e.target.value).toISOString(),
+                })
               }
             />
 
@@ -108,7 +111,8 @@ export default function ExpenseItem({
                 {expense.title}
               </h3>
               <p className="text-sm text-muted-foreground">
-                {expense.category} • {expense.createdAt}
+                {expense.category} •{" "}
+                {new Date(expense.createdAt).toLocaleDateString()}
               </p>
             </div>
 

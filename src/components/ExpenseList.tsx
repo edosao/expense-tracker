@@ -20,6 +20,8 @@ type ExpenseListProps = {
   selectedCategories: string[];
   searchQuery: string;
   setSearchQuery: (query: string) => void;
+  selectedMonth: string;
+  onSelectedMonth: (month: string) => void;
   onDeleteExpense?: (id: string) => void;
   onEditExpense?: (expense: Expense) => void;
   onStartEditing: (id: string) => void;
@@ -42,6 +44,8 @@ export default function ExpenseList({
   editingId,
   searchQuery,
   selectedCategories,
+  selectedMonth,
+  onSelectedMonth,
   onDeleteExpense,
   onEditExpense,
   onCancelEditing,
@@ -154,6 +158,23 @@ export default function ExpenseList({
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <Input
+          type="month"
+          value={selectedMonth === "all" ? "" : selectedMonth}
+          onChange={(e) => onSelectedMonth(e.target.value || "all")}
+          className="w-[180px]"
+        />
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onSelectedMonth("all")}
+        >
+          All Months
+        </Button>
       </div>
 
       {filteredExpenses.length === 0 ? (
