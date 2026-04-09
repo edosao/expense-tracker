@@ -38,7 +38,7 @@ function ExpenseForm({ onAddExpense, categories = [] }: ExpenseFormProps) {
       id: crypto.randomUUID(),
       title,
       amount: Number(amount),
-      createdAt: new Date(date).getTime(),
+      createdAt: new Date(date).toISOString(),
       category,
     };
 
@@ -96,11 +96,7 @@ function ExpenseForm({ onAddExpense, categories = [] }: ExpenseFormProps) {
           {error && <p className="text-sm text-red-500">{error}</p>}
 
           <motion.div whileTap={{ scale: 0.95 }}>
-            <Button
-              type="submit"
-              className="w-full gap-2"
-              // disabled={!isFormValid}
-            >
+            <Button type="submit" className="w-full gap-2">
               <PlusCircle className="h-4 w-4" />
               Add Expense
             </Button>

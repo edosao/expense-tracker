@@ -79,7 +79,7 @@ export default function ExpenseItem({
               onChange={(e) =>
                 setLocalExpense({
                   ...localExpense,
-                  createdAt: new Date(e.target.value).getTime(),
+                  createdAt: new Date(e.target.value).toISOString(),
                 })
               }
             />
