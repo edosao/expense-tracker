@@ -21,7 +21,6 @@ type ExpenseFormProps = {
 function ExpenseForm({ onAddExpense, categories = [] }: ExpenseFormProps) {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
-  const [date, setDate] = useState("");
   const [category, setCategory] = useState("");
 
   const [error, setError] = useState("");
@@ -29,7 +28,7 @@ function ExpenseForm({ onAddExpense, categories = [] }: ExpenseFormProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!title || !amount || !date || !category) {
+    if (!title || !amount || !category) {
       setError("Please fill all fields including category");
       return;
     }
@@ -38,7 +37,7 @@ function ExpenseForm({ onAddExpense, categories = [] }: ExpenseFormProps) {
       id: crypto.randomUUID(),
       title,
       amount: Number(amount),
-      createdAt: new Date().toISOString(),
+      createdAt: new Date(),
       category,
     };
 
@@ -46,7 +45,6 @@ function ExpenseForm({ onAddExpense, categories = [] }: ExpenseFormProps) {
 
     setTitle("");
     setAmount("");
-    setDate("");
     setCategory("");
     setError("");
   };
@@ -71,13 +69,6 @@ function ExpenseForm({ onAddExpense, categories = [] }: ExpenseFormProps) {
             min="0"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-          />
-
-          <Input
-            placeholder="Date"
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
           />
 
           <Select value={category} onValueChange={setCategory}>

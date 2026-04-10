@@ -120,7 +120,8 @@ export default function App() {
       selectedCategories.includes(exp.category);
 
     const matchesMonth =
-      selectedMonth === "all" || exp.createdAt.startsWith(selectedMonth);
+      selectedMonth === "all" ||
+      exp.createdAt.toISOString().slice(0, 7) === selectedMonth;
     // "2026-04" matches "2026-04-07T..."
 
     return matchesSearch && matchesCategory && matchesMonth;
