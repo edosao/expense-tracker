@@ -3,7 +3,7 @@ export type Expense = {
   title: string;
   amount: number;
   category: string;
-  createdAt: string;
+  createdAt: Date;
 };
 
 export type ActiveTab = "expenses" | "categories";

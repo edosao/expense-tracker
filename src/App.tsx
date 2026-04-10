@@ -110,15 +110,15 @@ export default function App() {
   };
 
   const filteredExpenses = expenses.filter((exp) => {
-    const matchesCategory =
-      selectedCategories.length === 0 ||
-      selectedCategories.includes(exp.category);
-
     const matchesSearch = exp.title
       .toLowerCase()
       .includes(searchQuery.toLowerCase());
 
-    return matchesCategory && matchesSearch;
+    const matchesCategory =
+      selectedCategories.length === 0 ||
+      selectedCategories.includes(exp.category);
+
+    return matchesSearch && matchesCategory;
   });
 
   return (
@@ -141,7 +141,10 @@ export default function App() {
 
             <div className="flex-1 w-full max-w-[400px] mt-3">
               {categories.length > 0 && (
-                <ExpenseSummary expenses={expenses} categories={categories} />
+                <ExpenseSummary
+                  filteredExpenses={filteredExpenses}
+                  categories={categories}
+                />
               )}
             </div>
           </main>

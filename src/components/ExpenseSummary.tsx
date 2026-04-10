@@ -11,17 +11,17 @@ const categoryIcons: Record<string, React.ReactNode> = {
 };
 
 export default function ExpenseSummary({
-  expenses,
+  filteredExpenses,
   categories,
 }: {
-  expenses: Expense[];
+  filteredExpenses: Expense[];
   categories: string[];
 }) {
-  const totalAmount = getTotalExpenses(expenses);
+  const totalAmount = getTotalExpenses(filteredExpenses);
 
   const allCategoryTotals = categories.reduce(
     (acc, category) => {
-      acc[category] = getTotalByCategory(expenses, category);
+      acc[category] = getTotalByCategory(filteredExpenses, category);
       return acc;
     },
     {} as Record<string, number>,

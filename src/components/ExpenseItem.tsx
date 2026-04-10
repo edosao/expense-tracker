@@ -73,17 +73,6 @@ export default function ExpenseItem({
               }
             />
 
-            <Input
-              type="date"
-              value={new Date(localExpense.createdAt).toISOString()}
-              onChange={(e) =>
-                setLocalExpense({
-                  ...localExpense,
-                  createdAt: new Date(e.target.value).toISOString(),
-                })
-              }
-            />
-
             <div className="flex gap-2">
               <motion.div whileTap={{ scale: 0.95 }} className="flex-1">
                 <Button size="sm" onClick={handleSave} className="w-full">
