@@ -11,11 +11,9 @@ const categoryIcons: Record<string, React.ReactNode> = {
 };
 
 export default function ExpenseSummary({
-  // expenses,
   filteredExpenses,
   categories,
 }: {
-  expenses: Expense[];
   filteredExpenses: Expense[];
   categories: string[];
 }) {

@@ -71,6 +71,13 @@ function ExpenseForm({ onAddExpense, categories = [] }: ExpenseFormProps) {
             onChange={(e) => setAmount(e.target.value)}
           />
 
+          {/* <Input
+            placeholder="Date"
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+          /> */}
+
           <Select value={category} onValueChange={setCategory}>
             <SelectTrigger>
               <SelectValue placeholder="Select Category" />
@@ -87,11 +94,7 @@ function ExpenseForm({ onAddExpense, categories = [] }: ExpenseFormProps) {
           {error && <p className="text-sm text-red-500">{error}</p>}
 
           <motion.div whileTap={{ scale: 0.95 }}>
-            <Button
-              type="submit"
-              className="w-full gap-2"
-              // disabled={!isFormValid}
-            >
+            <Button type="submit" className="w-full gap-2">
               <PlusCircle className="h-4 w-4" />
               Add Expense
             </Button>
