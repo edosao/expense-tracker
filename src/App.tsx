@@ -29,7 +29,12 @@ export default function App() {
   const [expenses, setExpenses] = useState<Expense[]>(() => {
     const storedExpenses = localStorage.getItem("expenses");
 
-    return storedExpenses ? JSON.parse(storedExpenses) : [];
+    return storedExpenses
+      ? JSON.parse(storedExpenses).map((e: any) => ({
+          ...e,
+          createdAt: new Date(e.createdAt),
+        }))
+      : [];
   });
 
   useEffect(() => {
@@ -148,7 +153,6 @@ export default function App() {
             <div className="flex-1 w-full max-w-[400px] mt-3">
               {categories.length > 0 && (
                 <ExpenseSummary
-                  expenses={expenses}
                   filteredExpenses={filteredExpenses}
                   categories={categories}
                 />
