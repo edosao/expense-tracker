@@ -7,6 +7,7 @@ import ExpenseForm from "./components/ExpenseForm";
 import ExpenseSummary from "./components/ExpenseSummary";
 import ExpenseList from "./components/ExpenseList";
 import type { ActiveTab, Expense } from "./types/expense";
+import { fetchExpensesFromLocalStorage, storeInLocalStorage } from "./utils/expense";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>("expenses");
@@ -24,25 +25,14 @@ export default function App() {
   });
 
   const [editingId, setEditingId] = useState<string | null>(null);
-
-  const [expenses, setExpenses] = useState<Expense[]>(() => {
-    const storedExpenses = localStorage.getItem("expenses");
-
-    if (!storedExpenses) return [];
-
-    const parsed = JSON.parse(storedExpenses);
-    return parsed.map((expense: Expense) => ({
-      ...expense,
-      createdAt: new Date(expense.createdAt),
-    }));
-  });
+  const [expenses, setExpenses] = useState<Expense[]>(fetchExpensesFromLocalStorage);
 
   useEffect(() => {
-    localStorage.setItem("categories", JSON.stringify(categories));
+    storeInLocalStorage("categories", categories)
   }, [categories]);
 
   useEffect(() => {
-    localStorage.setItem("expenses", JSON.stringify(expenses));
+    storeInLocalStorage("expenses", expenses)
   }, [expenses]);
 
   const handleAddExpense = (newExpense: Expense) => {
