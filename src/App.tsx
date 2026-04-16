@@ -28,7 +28,13 @@ export default function App() {
   const [expenses, setExpenses] = useState<Expense[]>(() => {
     const storedExpenses = localStorage.getItem("expenses");
 
-    return storedExpenses ? JSON.parse(storedExpenses) : [];
+    if (!storedExpenses) return [];
+
+    const parsed = JSON.parse(storedExpenses);
+    return parsed.map((expense: Expense) => ({
+      ...expense,
+      createdAt: new Date(expense.createdAt),
+    }));
   });
 
   useEffect(() => {
