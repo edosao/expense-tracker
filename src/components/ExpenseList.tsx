@@ -56,13 +56,13 @@ export default function ExpenseList({
 
   const sortByNewest = () => {
     return [...filteredExpenses].sort(
-      (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
+      (a, b) => b.createdAt - a.createdAt,
     );
   };
 
   const sortByOldest = () => {
     return [...filteredExpenses].sort(
-      (a, b) => a.createdAt.getTime() - b.createdAt.getTime(),
+      (a, b) => a.createdAt - b.createdAt,
     );
   };
 
