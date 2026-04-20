@@ -7,9 +7,12 @@ import ExpenseForm from "./components/ExpenseForm";
 import ExpenseSummary from "./components/ExpenseSummary";
 import ExpenseList from "./components/ExpenseList";
 import type { ActiveTab, Expense } from "./types/expense";
+import { fetchExpensesFromLocalStorage, storeInLocalStorage } from "./utils/expense";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>("expenses");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   const [categories, setCategories] = useState<string[]>(() => {
     const storedCategories = localStorage.getItem("categories");
@@ -22,19 +25,14 @@ export default function App() {
   });
 
   const [editingId, setEditingId] = useState<string | null>(null);
-
-  const [expenses, setExpenses] = useState<Expense[]>(() => {
-    const storedExpenses = localStorage.getItem("expenses");
-
-    return storedExpenses ? JSON.parse(storedExpenses) : [];
-  });
+  const [expenses, setExpenses] = useState<Expense[]>(fetchExpensesFromLocalStorage);
 
   useEffect(() => {
-    localStorage.setItem("categories", JSON.stringify(categories));
+    storeInLocalStorage("categories", categories)
   }, [categories]);
 
   useEffect(() => {
-    localStorage.setItem("expenses", JSON.stringify(expenses));
+    storeInLocalStorage("expenses", expenses)
   }, [expenses]);
 
   const handleAddExpense = (newExpense: Expense) => {
@@ -101,6 +99,24 @@ export default function App() {
     );
   };
 
+  const toggleCategory = (category: string, checked: boolean) => {
+    setSelectedCategories((prev) =>
+      checked ? [...prev, category] : prev.filter((c) => c !== category),
+    );
+  };
+
+  const filteredExpenses = expenses.filter((exp) => {
+    const matchesSearch = exp.title
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+
+    const matchesCategory =
+      selectedCategories.length === 0 ||
+      selectedCategories.includes(exp.category);
+
+    return matchesSearch && matchesCategory;
+  });
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Header />
@@ -121,7 +137,10 @@ export default function App() {
 
             <div className="flex-1 w-full max-w-[400px] mt-3">
               {categories.length > 0 && (
-                <ExpenseSummary expenses={expenses} categories={categories} />
+                <ExpenseSummary
+                  filteredExpenses={filteredExpenses}
+                  categories={categories}
+                />
               )}
             </div>
           </main>
@@ -134,7 +153,12 @@ export default function App() {
               onEditExpense={handleEditExpense}
               onStartEditing={handleStartEditing}
               onCancelEditing={handleCancelEditing}
+              onToggleCategory={toggleCategory}
               categories={categories}
+              selectedCategories={selectedCategories}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              filteredExpenses={filteredExpenses}
             />
           </div>
         </>

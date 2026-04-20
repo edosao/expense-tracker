@@ -73,14 +73,6 @@ export default function ExpenseItem({
               }
             />
 
-            <Input
-              type="date"
-              value={localExpense.date}
-              onChange={(e) =>
-                setLocalExpense({ ...localExpense, date: e.target.value })
-              }
-            />
-
             <div className="flex gap-2">
               <motion.div whileTap={{ scale: 0.95 }} className="flex-1">
                 <Button size="sm" onClick={handleSave} className="w-full">
@@ -108,7 +100,8 @@ export default function ExpenseItem({
                 {expense.title}
               </h3>
               <p className="text-sm text-muted-foreground">
-                {expense.category} • {expense.date}
+                {expense.category} •{" "}
+                {new Date(expense.createdAt).toLocaleDateString()}
               </p>
             </div>
 
