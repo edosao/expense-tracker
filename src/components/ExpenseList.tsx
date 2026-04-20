@@ -59,11 +59,15 @@ export default function ExpenseList({
   const sortOptions = ["Newest", "Oldest", "Highest Amount", "Lowest Amount"];
 
   const sortByNewest = () => {
-    return [...filteredExpenses].sort((a, b) => +b.createdAt - +a.createdAt);
+    return [...filteredExpenses].sort(
+      (a, b) => b.createdAt - a.createdAt,
+    );
   };
 
   const sortByOldest = () => {
-    return [...filteredExpenses].sort((a, b) => +a.createdAt - +b.createdAt);
+    return [...filteredExpenses].sort(
+      (a, b) => a.createdAt - b.createdAt,
+    );
   };
 
   const sortByHighestAmount = () => {

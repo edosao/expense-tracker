@@ -7,6 +7,10 @@ import ExpenseForm from "./components/ExpenseForm";
 import ExpenseSummary from "./components/ExpenseSummary";
 import ExpenseList from "./components/ExpenseList";
 import type { ActiveTab, Expense } from "./types/expense";
+import {
+  fetchExpensesFromLocalStorage,
+  storeInLocalStorage,
+} from "./utils/expense";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>("expenses");
@@ -25,24 +29,16 @@ export default function App() {
   });
 
   const [editingId, setEditingId] = useState<string | null>(null);
-
-  const [expenses, setExpenses] = useState<Expense[]>(() => {
-    const storedExpenses = localStorage.getItem("expenses");
-
-    return storedExpenses
-      ? JSON.parse(storedExpenses).map((e: any) => ({
-          ...e,
-          createdAt: new Date(e.createdAt),
-        }))
-      : [];
-  });
+  const [expenses, setExpenses] = useState<Expense[]>(
+    fetchExpensesFromLocalStorage,
+  );
 
   useEffect(() => {
-    localStorage.setItem("categories", JSON.stringify(categories));
+    storeInLocalStorage("categories", categories);
   }, [categories]);
 
   useEffect(() => {
-    localStorage.setItem("expenses", JSON.stringify(expenses));
+    storeInLocalStorage("expenses", expenses);
   }, [expenses]);
 
   const handleAddExpense = (newExpense: Expense) => {
@@ -126,8 +122,7 @@ export default function App() {
 
     const matchesMonth =
       selectedMonth === "all" ||
-      exp.createdAt.toISOString().slice(0, 7) === selectedMonth;
-    // "2026-04" matches "2026-04-07T..."
+      new Date(exp.createdAt).toISOString().slice(0, 7) === selectedMonth;
 
     return matchesSearch && matchesCategory && matchesMonth;
   });
