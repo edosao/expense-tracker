@@ -111,7 +111,18 @@ export default function App() {
     );
   };
 
-  const filteredExpenses = expenses.filter((exp) => {
+  const getMonthFilteredExpenses = () => {
+    if (selectedMonth === "all") return expenses;
+
+    const selectedMonthNumber = Number(selectedMonth.split("-")[1]);
+    return expenses.filter(
+      (exp) => new Date(exp.createdAt).getMonth() + 1 === selectedMonthNumber,
+    );
+  };
+
+  const monthFilteredExpenses = getMonthFilteredExpenses();
+
+  const filteredExpenses = monthFilteredExpenses.filter((exp) => {
     const matchesSearch = exp.title
       .toLowerCase()
       .includes(searchQuery.toLowerCase());
@@ -120,11 +131,7 @@ export default function App() {
       selectedCategories.length === 0 ||
       selectedCategories.includes(exp.category);
 
-    const matchesMonth =
-      selectedMonth === "all" ||
-      new Date(exp.createdAt).toISOString().slice(0, 7) === selectedMonth;
-
-    return matchesSearch && matchesCategory && matchesMonth;
+    return matchesSearch && matchesCategory;
   });
 
   return (

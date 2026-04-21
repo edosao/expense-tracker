@@ -19,15 +19,15 @@ type ExpenseListProps = {
   editingId: string | null;
   selectedCategories: string[];
   searchQuery: string;
-  setSearchQuery: (query: string) => void;
   selectedMonth: string;
+  filteredExpenses: Expense[];
+  setSearchQuery: (query: string) => void;
   onSelectedMonth: (month: string) => void;
   onDeleteExpense?: (id: string) => void;
   onEditExpense?: (expense: Expense) => void;
   onStartEditing: (id: string) => void;
   onCancelEditing: () => void;
   onToggleCategory?: (category: string, checked: boolean) => void;
-  filteredExpenses: Expense[];
 };
 
 const containerVariants = {
@@ -59,15 +59,11 @@ export default function ExpenseList({
   const sortOptions = ["Newest", "Oldest", "Highest Amount", "Lowest Amount"];
 
   const sortByNewest = () => {
-    return [...filteredExpenses].sort(
-      (a, b) => b.createdAt - a.createdAt,
-    );
+    return [...filteredExpenses].sort((a, b) => b.createdAt - a.createdAt);
   };
 
   const sortByOldest = () => {
-    return [...filteredExpenses].sort(
-      (a, b) => a.createdAt - b.createdAt,
-    );
+    return [...filteredExpenses].sort((a, b) => a.createdAt - b.createdAt);
   };
 
   const sortByHighestAmount = () => {
