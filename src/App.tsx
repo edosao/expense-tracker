@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Card } from "./components/ui/card";
 import Header from "./components/Header";
 import Tabs from "./components/Tabs";
@@ -111,28 +111,28 @@ export default function App() {
     );
   };
 
-  const getMonthFilteredExpenses = () => {
-    if (selectedMonth === "all") return expenses;
+  const filteredExpenses = useMemo(() => {
+    let result = expenses;
 
-    const selectedMonthNumber = Number(selectedMonth.split("-")[1]);
-    return expenses.filter(
-      (exp) => new Date(exp.createdAt).getMonth() + 1 === selectedMonthNumber,
+    if (selectedMonth !== "all") {
+      const selectedMonthNumber = Number(selectedMonth.split("-")[1]);
+      result = result.filter(
+        (exp) => new Date(exp.createdAt).getMonth() + 1 === selectedMonthNumber,
+      );
+    }
+
+    result = result.filter((exp) =>
+      exp.title.toLowerCase().includes(searchQuery.toLowerCase()),
     );
-  };
 
-  const monthFilteredExpenses = getMonthFilteredExpenses();
+    if (selectedCategories.length > 0) {
+      result = result.filter((exp) =>
+        selectedCategories.includes(exp.category),
+      );
+    }
 
-  const filteredExpenses = monthFilteredExpenses.filter((exp) => {
-    const matchesSearch = exp.title
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
-
-    const matchesCategory =
-      selectedCategories.length === 0 ||
-      selectedCategories.includes(exp.category);
-
-    return matchesSearch && matchesCategory;
-  });
+    return result;
+  }, [expenses, selectedMonth, searchQuery, selectedCategories]);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
