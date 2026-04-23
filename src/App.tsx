@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { Card } from "./components/ui/card";
 import Header from "./components/Header";
 import Tabs from "./components/Tabs";
@@ -111,28 +111,30 @@ export default function App() {
     );
   };
 
-  const filteredExpenses = useMemo(() => {
-    let result = expenses;
+  const matchesMonth = (exp: Expense) => {
+    if (selectedMonth === "all") return true;
 
-    if (selectedMonth !== "all") {
-      const selectedMonthNumber = Number(selectedMonth.split("-")[1]);
-      result = result.filter(
-        (exp) => new Date(exp.createdAt).getMonth() + 1 === selectedMonthNumber,
-      );
-    }
+    const expMonth = new Date(exp.createdAt).getMonth() + 1;
 
-    result = result.filter((exp) =>
-      exp.title.toLowerCase().includes(searchQuery.toLowerCase()),
+    const selectedMonthNumber = Number(selectedMonth.split("-")[1]);
+
+    return expMonth === selectedMonthNumber;
+  };
+
+  const matchesSearch = (exp: Expense) => {
+    return exp.title.toLowerCase().includes(searchQuery.toLowerCase());
+  };
+
+  const matchesCategory = (exp: Expense) => {
+    return (
+      selectedCategories.length === 0 ||
+      selectedCategories.includes(exp.category)
     );
+  };
 
-    if (selectedCategories.length > 0) {
-      result = result.filter((exp) =>
-        selectedCategories.includes(exp.category),
-      );
-    }
-
-    return result;
-  }, [expenses, selectedMonth, searchQuery, selectedCategories]);
+  const filteredExpenses = expenses.filter(
+    (exp) => matchesMonth(exp) && matchesSearch(exp) && matchesCategory(exp),
+  );
 
   return (
     <div className="min-h-screen bg-background text-foreground">
