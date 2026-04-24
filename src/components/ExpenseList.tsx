@@ -19,13 +19,15 @@ type ExpenseListProps = {
   editingId: string | null;
   selectedCategories: string[];
   searchQuery: string;
+  selectedMonth: string;
+  filteredExpenses: Expense[];
   setSearchQuery: (query: string) => void;
+  onSelectedMonth: (month: string) => void;
   onDeleteExpense?: (id: string) => void;
   onEditExpense?: (expense: Expense) => void;
   onStartEditing: (id: string) => void;
   onCancelEditing: () => void;
   onToggleCategory?: (category: string, checked: boolean) => void;
-  filteredExpenses: Expense[];
 };
 
 const containerVariants = {
@@ -42,6 +44,8 @@ export default function ExpenseList({
   editingId,
   searchQuery,
   selectedCategories,
+  selectedMonth,
+  onSelectedMonth,
   onDeleteExpense,
   onEditExpense,
   onCancelEditing,
@@ -55,15 +59,11 @@ export default function ExpenseList({
   const sortOptions = ["Newest", "Oldest", "Highest Amount", "Lowest Amount"];
 
   const sortByNewest = () => {
-    return [...filteredExpenses].sort(
-      (a, b) => b.createdAt - a.createdAt,
-    );
+    return [...filteredExpenses].sort((a, b) => b.createdAt - a.createdAt);
   };
 
   const sortByOldest = () => {
-    return [...filteredExpenses].sort(
-      (a, b) => a.createdAt - b.createdAt,
-    );
+    return [...filteredExpenses].sort((a, b) => a.createdAt - b.createdAt);
   };
 
   const sortByHighestAmount = () => {
@@ -152,6 +152,23 @@ export default function ExpenseList({
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <Input
+          type="month"
+          value={selectedMonth === "all" ? "" : selectedMonth}
+          onChange={(e) => onSelectedMonth(e.target.value || "all")}
+          className="w-[180px]"
+        />
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onSelectedMonth("all")}
+        >
+          All Months
+        </Button>
       </div>
 
       {filteredExpenses.length === 0 ? (

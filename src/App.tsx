@@ -7,12 +7,16 @@ import ExpenseForm from "./components/ExpenseForm";
 import ExpenseSummary from "./components/ExpenseSummary";
 import ExpenseList from "./components/ExpenseList";
 import type { ActiveTab, Expense } from "./types/expense";
-import { fetchExpensesFromLocalStorage, storeInLocalStorage } from "./utils/expense";
+import {
+  fetchExpensesFromLocalStorage,
+  storeInLocalStorage,
+} from "./utils/expense";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>("expenses");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedMonth, setSelectedMonth] = useState<string>("all");
 
   const [categories, setCategories] = useState<string[]>(() => {
     const storedCategories = localStorage.getItem("categories");
@@ -25,14 +29,16 @@ export default function App() {
   });
 
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [expenses, setExpenses] = useState<Expense[]>(fetchExpensesFromLocalStorage);
+  const [expenses, setExpenses] = useState<Expense[]>(
+    fetchExpensesFromLocalStorage,
+  );
 
   useEffect(() => {
-    storeInLocalStorage("categories", categories)
+    storeInLocalStorage("categories", categories);
   }, [categories]);
 
   useEffect(() => {
-    storeInLocalStorage("expenses", expenses)
+    storeInLocalStorage("expenses", expenses);
   }, [expenses]);
 
   const handleAddExpense = (newExpense: Expense) => {
@@ -105,17 +111,30 @@ export default function App() {
     );
   };
 
-  const filteredExpenses = expenses.filter((exp) => {
-    const matchesSearch = exp.title
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
+  const matchesMonth = (exp: Expense) => {
+    if (selectedMonth === "all") return true;
 
-    const matchesCategory =
+    const expMonth = new Date(exp.createdAt).getMonth() + 1;
+
+    const selectedMonthNumber = Number(selectedMonth.split("-")[1]);
+
+    return expMonth === selectedMonthNumber;
+  };
+
+  const matchesSearch = (exp: Expense) => {
+    return exp.title.toLowerCase().includes(searchQuery.toLowerCase());
+  };
+
+  const matchesCategory = (exp: Expense) => {
+    return (
       selectedCategories.length === 0 ||
-      selectedCategories.includes(exp.category);
+      selectedCategories.includes(exp.category)
+    );
+  };
 
-    return matchesSearch && matchesCategory;
-  });
+  const filteredExpenses = expenses.filter(
+    (exp) => matchesMonth(exp) && matchesSearch(exp) && matchesCategory(exp),
+  );
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -159,6 +178,8 @@ export default function App() {
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
               filteredExpenses={filteredExpenses}
+              selectedMonth={selectedMonth}
+              onSelectedMonth={setSelectedMonth}
             />
           </div>
         </>
