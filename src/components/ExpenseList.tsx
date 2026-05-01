@@ -158,7 +158,9 @@ export default function ExpenseList({
         <Input
           type="month"
           value={selectedMonth === "all" ? "" : selectedMonth}
-          onChange={(e) => onSelectedMonth(e.target.value || "all")}
+          onChange={(e) => {
+            onSelectedMonth(e.target.value || "all");
+          }}
           className="w-[180px]"
         />
 
