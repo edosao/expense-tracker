@@ -56,7 +56,7 @@ export default function ExpenseList({
 }: ExpenseListProps) {
   const [sortBy, setSortBy] = useState<string>("Newest");
 
-  const sortOptions = ["Newest", "Oldest", "Highest Amount", "Lowest Amount"];
+  const sortOptions = ["Newest", "Oldest", "Highest-amount", "Lowest-amount"];
 
   const sortByNewest = () => {
     return [...filteredExpenses].sort((a, b) => b.createdAt - a.createdAt);
@@ -76,7 +76,6 @@ export default function ExpenseList({
 
   const handleSorting = (option: string) => {
     setSortBy(option);
-    console.log(filteredExpenses);
   };
 
   const getSortedExpenses = () => {
@@ -85,9 +84,9 @@ export default function ExpenseList({
         return sortByNewest();
       case "Oldest":
         return sortByOldest();
-      case "Highest Amount":
+      case "Highest-amount":
         return sortByHighestAmount();
-      case "Lowest Amount":
+      case "Lowest-amount":
         return sortByLowestAmount();
       default:
         return filteredExpenses;

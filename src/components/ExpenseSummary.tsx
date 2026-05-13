@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import type { Expense } from "@/types/expense";
 import { BarChart3, Utensils, Car, Receipt, Clapperboard } from "lucide-react";
@@ -20,45 +20,45 @@ export default function ExpenseSummary({
   categories: string[];
   selectedMonth: string;
 }) {
-  const budgetLimit = {
-    food: 1000,
-    transport: 500,
-    bills: 800,
-    entertainment: 300,
-    other: 1000,
-  };
-
   const currentMonth =
     selectedMonth === "all"
       ? new Date().toISOString().slice(0, 7)
       : selectedMonth;
 
   const [allMonthBudgets, setAllMonthBudgets] = useState<
-    Record<string, Record<string, number>>
+    Record<string, Record<string, number> | null>
   >(() => {
     const stored = localStorage.getItem("monthlyBudgets");
     return stored ? JSON.parse(stored) : {};
   });
 
-  useEffect(() => {
-    localStorage.setItem("monthlyBudgets", JSON.stringify(allMonthBudgets));
-  }, [allMonthBudgets]);
-
   // Get the budget for the current month, falling back to defaults
-  const budgets = allMonthBudgets[currentMonth] ?? budgetLimit;
+  const budgets = allMonthBudgets[currentMonth] ?? null;
 
   const updateBudget = (category: string, value: number) => {
-    setAllMonthBudgets((prev) => ({
-      ...prev,
-      [currentMonth]: {
-        ...(prev[currentMonth] ?? budgetLimit),
-        [category]: value,
+    const budgetEntry = {
+      amount: value,
+      category,
+      month: currentMonth,
+    };
+
+    const updated = {
+      ...allMonthBudgets,
+      [budgetEntry.month]: {
+        ...(allMonthBudgets[budgetEntry.month] ?? {}),
+        [budgetEntry.category]: budgetEntry.amount,
       },
-    }));
+    };
+
+    setAllMonthBudgets(updated);
+
+    localStorage.setItem("monthlyBudgets", JSON.stringify(updated));
   };
 
   const totalAmount = getTotalExpenses(filteredExpenses);
-  const totalBudget = Object.values(budgets).reduce((a, b) => a + b, 0);
+  const totalBudget = budgets
+    ? Object.values(budgets).reduce((a, b) => a + b, 0)
+    : 0;
   const isOverTotalBudget =
     selectedMonth !== "all" && totalAmount > totalBudget;
 
@@ -130,7 +130,9 @@ export default function ExpenseSummary({
       <div className="space-y-3">
         {Object.entries(allCategoryTotals).map(([category, amount]) => {
           const isOverBudget =
-            selectedMonth !== "all" && amount > (budgets[category] ?? 0);
+            selectedMonth !== "all" &&
+            budgets !== null &&
+            amount > (budgets[category] ?? 0);
           return (
             <div
               key={category}
@@ -166,7 +168,7 @@ export default function ExpenseSummary({
                     type="number"
                     min="0"
                     placeholder="0.00"
-                    value={budgets[category] ?? ""}
+                    value={budgets?.[category] ?? ""}
                     onChange={(e) =>
                       updateBudget(category, Number(e.target.value))
                     }
