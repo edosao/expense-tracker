@@ -159,6 +159,7 @@ export default function App() {
                 <ExpenseSummary
                   filteredExpenses={filteredExpenses}
                   categories={categories}
+                  selectedMonth={selectedMonth}
                 />
               )}
             </div>
