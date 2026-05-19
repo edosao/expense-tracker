@@ -195,6 +195,7 @@ export default function ExpenseList({
                 onSaveExpense={onEditExpense}
                 onStartEditing={onStartEditing}
                 onCancelEditing={onCancelEditing}
+                categories={categories}
               />
             ))}
           </AnimatePresence>

@@ -3,12 +3,20 @@ import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Trash2, Edit, Tag } from "lucide-react";
 import type { Expense } from "@/types/expense";
 
 type ExpenseItemProps = {
   expense: Expense;
   editingId: string | null;
+  categories: string[];
   onDeleteExpense?: (id: string) => void;
   onSaveExpense?: (expense: Expense) => void;
   onStartEditing: (id: string) => void;
@@ -22,6 +30,7 @@ export default function ExpenseItem({
   onSaveExpense,
   onStartEditing,
   onCancelEditing,
+  categories,
 }: ExpenseItemProps) {
   const [localExpense, setLocalExpense] = useState(expense);
 
@@ -72,6 +81,24 @@ export default function ExpenseItem({
                 })
               }
             />
+
+            <Select
+              value={localExpense.category}
+              onValueChange={(value) =>
+                setLocalExpense({ ...localExpense, category: value })
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select category" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map((cat) => (
+                  <SelectItem key={cat} value={cat}>
+                    <span className="capitalize">{cat}</span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
             <div className="flex gap-2">
               <motion.div whileTap={{ scale: 0.95 }} className="flex-1">
