@@ -32,6 +32,7 @@ export default function App() {
   const [expenses, setExpenses] = useState<Expense[]>(
     fetchExpensesFromLocalStorage,
   );
+  const [originalExpense, setOriginalExpense] = useState<Expense | null>(null);
 
   useEffect(() => {
     storeInLocalStorage("categories", categories);
@@ -50,11 +51,16 @@ export default function App() {
   };
 
   const handleStartEditing = (id: string) => {
+    const expenseToEdit = expenses.find((e) => e.id === id);
+    if (expenseToEdit) {
+      setOriginalExpense({ ...expenseToEdit });
+    }
     setEditingId(id);
   };
 
   const handleEditExpense = (updated: Expense) => {
     setExpenses((prev) => prev.map((e) => (e.id === updated.id ? updated : e)));
+    setOriginalExpense(null);
     setEditingId(null);
   };
 
@@ -69,6 +75,12 @@ export default function App() {
   };
 
   const handleCancelEditing = () => {
+    if (originalExpense) {
+      setExpenses((prev) =>
+        prev.map((e) => (e.id === originalExpense.id ? originalExpense : e)),
+      );
+    }
+    setOriginalExpense(null);
     setEditingId(null);
   };
 

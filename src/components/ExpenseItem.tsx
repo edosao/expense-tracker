@@ -39,7 +39,6 @@ export default function ExpenseItem({
 }: ExpenseItemProps) {
   const handleSave = () => {
     onSaveExpense?.(expense);
-    onCancelEditing();
   };
 
   const handleCancel = () => {
