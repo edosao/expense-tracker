@@ -58,6 +58,16 @@ export default function App() {
     setEditingId(null);
   };
 
+  const handleUpdateExpense = (
+    id: string,
+    field: keyof Expense,
+    value: string | number,
+  ) => {
+    setExpenses((prev) =>
+      prev.map((e) => (e.id === id ? { ...e, [field]: value } : e)),
+    );
+  };
+
   const handleCancelEditing = () => {
     setEditingId(null);
   };
@@ -172,6 +182,7 @@ export default function App() {
               onDeleteExpense={handleDeleteExpense}
               onEditExpense={handleEditExpense}
               onStartEditing={handleStartEditing}
+              onUpdateExpense={handleUpdateExpense}
               onCancelEditing={handleCancelEditing}
               onToggleCategory={toggleCategory}
               categories={categories}

@@ -25,6 +25,11 @@ type ExpenseListProps = {
   onSelectedMonth: (month: string) => void;
   onDeleteExpense?: (id: string) => void;
   onEditExpense?: (expense: Expense) => void;
+  onUpdateExpense?: (
+    id: string,
+    field: keyof Expense,
+    value: string | number,
+  ) => void;
   onStartEditing: (id: string) => void;
   onCancelEditing: () => void;
   onToggleCategory?: (category: string, checked: boolean) => void;
@@ -48,6 +53,7 @@ export default function ExpenseList({
   onSelectedMonth,
   onDeleteExpense,
   onEditExpense,
+  onUpdateExpense,
   onCancelEditing,
   onToggleCategory,
   onStartEditing,
@@ -193,6 +199,7 @@ export default function ExpenseList({
                 editingId={editingId}
                 onDeleteExpense={onDeleteExpense}
                 onSaveExpense={onEditExpense}
+                onUpdateExpense={onUpdateExpense}
                 onStartEditing={onStartEditing}
                 onCancelEditing={onCancelEditing}
                 categories={categories}

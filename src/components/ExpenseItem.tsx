@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,6 +18,11 @@ type ExpenseItemProps = {
   categories: string[];
   onDeleteExpense?: (id: string) => void;
   onSaveExpense?: (expense: Expense) => void;
+  onUpdateExpense?: (
+    id: string,
+    field: keyof Expense,
+    value: string | number,
+  ) => void;
   onStartEditing: (id: string) => void;
   onCancelEditing: () => void;
 };
@@ -28,19 +32,17 @@ export default function ExpenseItem({
   editingId,
   onDeleteExpense,
   onSaveExpense,
+  onUpdateExpense,
   onStartEditing,
   onCancelEditing,
   categories,
 }: ExpenseItemProps) {
-  const [localExpense, setLocalExpense] = useState(expense);
-
   const handleSave = () => {
-    onSaveExpense?.(localExpense);
+    onSaveExpense?.(expense);
     onCancelEditing();
   };
 
   const handleCancel = () => {
-    setLocalExpense(expense);
     onCancelEditing();
   };
 
@@ -65,27 +67,24 @@ export default function ExpenseItem({
             className="space-y-3"
           >
             <Input
-              value={localExpense.title}
+              value={expense.title}
               onChange={(e) =>
-                setLocalExpense({ ...localExpense, title: e.target.value })
+                onUpdateExpense?.(expense.id, "title", e.target.value)
               }
             />
 
             <Input
               type="number"
-              value={localExpense.amount}
+              value={expense.amount}
               onChange={(e) =>
-                setLocalExpense({
-                  ...localExpense,
-                  amount: Number(e.target.value),
-                })
+                onUpdateExpense?.(expense.id, "amount", Number(e.target.value))
               }
             />
 
             <Select
-              value={localExpense.category}
+              value={expense.category}
               onValueChange={(value) =>
-                setLocalExpense({ ...localExpense, category: value })
+                onUpdateExpense?.(expense.id, "category", value)
               }
             >
               <SelectTrigger>
