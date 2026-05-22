@@ -11,38 +11,32 @@ import {
 } from "@/components/ui/select";
 import { Trash2, Edit, Tag } from "lucide-react";
 import type { Expense } from "@/types/expense";
+import { useState } from "react";
 
 type ExpenseItemProps = {
   expense: Expense;
-  editingId: string | null;
   categories: string[];
   onDeleteExpense?: (id: string) => void;
   onSaveExpense?: (expense: Expense) => void;
-  onUpdateExpense?: (
-    id: string,
-    field: keyof Expense,
-    value: string | number,
-  ) => void;
-  onStartEditing: (id: string) => void;
-  onCancelEditing: () => void;
 };
 
 export default function ExpenseItem({
   expense,
-  editingId,
   onDeleteExpense,
   onSaveExpense,
-  onUpdateExpense,
-  onStartEditing,
-  onCancelEditing,
   categories,
 }: ExpenseItemProps) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [draft, setDraft] = useState<Expense>(expense);
+
   const handleSave = () => {
-    onSaveExpense?.(expense);
+    onSaveExpense?.(draft);
+    setIsEditing(false);
   };
 
   const handleCancel = () => {
-    onCancelEditing();
+    setDraft(expense);
+    setIsEditing(false);
   };
 
   return (
@@ -55,36 +49,30 @@ export default function ExpenseItem({
       transition={{ duration: 0.25 }}
     >
       <Card
-        className={`p-4 ${
-          editingId === expense.id ? "ring-2 ring-primary bg-muted" : ""
-        }`}
+        className={`p-4 ${isEditing ? "ring-2 ring-primary bg-muted" : ""}`}
       >
-        {editingId === expense.id ? (
+        {isEditing ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="space-y-3"
           >
             <Input
-              value={expense.title}
-              onChange={(e) =>
-                onUpdateExpense?.(expense.id, "title", e.target.value)
-              }
+              value={draft.title}
+              onChange={(e) => setDraft({ ...draft, title: e.target.value })}
             />
 
             <Input
               type="number"
-              value={expense.amount}
+              value={draft.amount}
               onChange={(e) =>
-                onUpdateExpense?.(expense.id, "amount", Number(e.target.value))
+                setDraft({ ...draft, amount: Number(e.target.value) })
               }
             />
 
             <Select
-              value={expense.category}
-              onValueChange={(value) =>
-                onUpdateExpense?.(expense.id, "category", value)
-              }
+              value={draft.category}
+              onValueChange={(value) => setDraft({ ...draft, category: value })}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select category" />
@@ -139,7 +127,7 @@ export default function ExpenseItem({
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => onStartEditing(expense.id)}
+                  onClick={() => setIsEditing(true)}
                 >
                   <Edit className="w-4 h-4" />
                 </Button>

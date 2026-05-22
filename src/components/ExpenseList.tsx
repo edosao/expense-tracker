@@ -16,7 +16,6 @@ import { SlidersHorizontal, ArrowUpDown } from "lucide-react";
 type ExpenseListProps = {
   expenses: Expense[];
   categories: string[];
-  editingId: string | null;
   selectedCategories: string[];
   searchQuery: string;
   selectedMonth: string;
@@ -25,13 +24,6 @@ type ExpenseListProps = {
   onSelectedMonth: (month: string) => void;
   onDeleteExpense?: (id: string) => void;
   onEditExpense?: (expense: Expense) => void;
-  onUpdateExpense?: (
-    id: string,
-    field: keyof Expense,
-    value: string | number,
-  ) => void;
-  onStartEditing: (id: string) => void;
-  onCancelEditing: () => void;
   onToggleCategory?: (category: string, checked: boolean) => void;
 };
 
@@ -46,17 +38,13 @@ const containerVariants = {
 
 export default function ExpenseList({
   categories,
-  editingId,
   searchQuery,
   selectedCategories,
   selectedMonth,
   onSelectedMonth,
   onDeleteExpense,
   onEditExpense,
-  onUpdateExpense,
-  onCancelEditing,
   onToggleCategory,
-  onStartEditing,
   filteredExpenses,
   setSearchQuery,
 }: ExpenseListProps) {
@@ -196,12 +184,8 @@ export default function ExpenseList({
               <ExpenseItem
                 key={expenseItem.id}
                 expense={expenseItem}
-                editingId={editingId}
                 onDeleteExpense={onDeleteExpense}
                 onSaveExpense={onEditExpense}
-                onUpdateExpense={onUpdateExpense}
-                onStartEditing={onStartEditing}
-                onCancelEditing={onCancelEditing}
                 categories={categories}
               />
             ))}

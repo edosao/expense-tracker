@@ -28,60 +28,32 @@ export default function App() {
     return base.includes("other") ? base : [...base, "other"];
   });
 
-  const [editingId, setEditingId] = useState<string | null>(null);
   const [expenses, setExpenses] = useState<Expense[]>(
     fetchExpensesFromLocalStorage,
   );
-  const [originalExpense, setOriginalExpense] = useState<Expense | null>(null);
 
   useEffect(() => {
     storeInLocalStorage("categories", categories);
   }, [categories]);
 
-  useEffect(() => {
-    storeInLocalStorage("expenses", expenses);
-  }, [expenses]);
-
   const handleAddExpense = (newExpense: Expense) => {
-    setExpenses((prev) => [...prev, newExpense]);
+    const updatedExpenses = [...expenses, newExpense];
+    setExpenses(updatedExpenses);
+    localStorage.setItem("expenses", JSON.stringify(updatedExpenses));
   };
 
   const handleDeleteExpense = (id: string) => {
-    setExpenses((prev) => prev.filter((e) => e.id !== id));
-  };
-
-  const handleStartEditing = (id: string) => {
-    const expenseToEdit = expenses.find((e) => e.id === id);
-    if (expenseToEdit) {
-      setOriginalExpense({ ...expenseToEdit });
-    }
-    setEditingId(id);
+    const updatedExpenses = expenses.filter((e) => e.id !== id);
+    setExpenses(updatedExpenses);
+    localStorage.setItem("expenses", JSON.stringify(updatedExpenses));
   };
 
   const handleEditExpense = (updated: Expense) => {
-    setExpenses((prev) => prev.map((e) => (e.id === updated.id ? updated : e)));
-    setOriginalExpense(null);
-    setEditingId(null);
-  };
-
-  const handleUpdateExpense = (
-    id: string,
-    field: keyof Expense,
-    value: string | number,
-  ) => {
-    setExpenses((prev) =>
-      prev.map((e) => (e.id === id ? { ...e, [field]: value } : e)),
+    const updatedExpenses = expenses.map((e) =>
+      e.id === updated.id ? updated : e,
     );
-  };
-
-  const handleCancelEditing = () => {
-    if (originalExpense) {
-      setExpenses((prev) =>
-        prev.map((e) => (e.id === originalExpense.id ? originalExpense : e)),
-      );
-    }
-    setOriginalExpense(null);
-    setEditingId(null);
+    setExpenses(updatedExpenses);
+    localStorage.setItem("expenses", JSON.stringify(updatedExpenses));
   };
 
   const handleAddCategory = (category: string) => {
@@ -190,12 +162,8 @@ export default function App() {
           <div className="p-6">
             <ExpenseList
               expenses={expenses}
-              editingId={editingId}
               onDeleteExpense={handleDeleteExpense}
               onEditExpense={handleEditExpense}
-              onStartEditing={handleStartEditing}
-              onUpdateExpense={handleUpdateExpense}
-              onCancelEditing={handleCancelEditing}
               onToggleCategory={toggleCategory}
               categories={categories}
               selectedCategories={selectedCategories}
