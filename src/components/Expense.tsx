@@ -13,24 +13,24 @@ import { Trash2, Edit, Tag } from "lucide-react";
 import type { Expense } from "@/types/expense";
 import { useState } from "react";
 
-type ExpenseItemProps = {
+type ExpenseProps = {
   expense: Expense;
   categories: string[];
-  onDeleteExpense?: (id: string) => void;
-  onSaveExpense?: (expense: Expense) => void;
+  onDeleteExpense: (id: string) => void;
+  onSaveExpense: (expense: Expense) => void;
 };
 
-export default function ExpenseItem({
+export default function Expense({
   expense,
   onDeleteExpense,
   onSaveExpense,
   categories,
-}: ExpenseItemProps) {
+}: ExpenseProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState<Expense>(expense);
 
   const handleSave = () => {
-    onSaveExpense?.(draft);
+    onSaveExpense(draft);
     setIsEditing(false);
   };
 
@@ -137,7 +137,7 @@ export default function ExpenseItem({
                 <Button
                   size="sm"
                   variant="destructive"
-                  onClick={() => onDeleteExpense?.(expense.id)}
+                  onClick={() => onDeleteExpense(expense.id)}
                 >
                   <Trash2 className="w-4 h-4" />
                 </Button>

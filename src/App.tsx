@@ -5,7 +5,7 @@ import Tabs from "./components/Tabs";
 import CategoryManager from "./components/CategoryManager";
 import ExpenseForm from "./components/ExpenseForm";
 import ExpenseSummary from "./components/ExpenseSummary";
-import ExpenseList from "./components/ExpenseList";
+import Expenses from "./components/Expenses";
 import type { ActiveTab, Expense } from "./types/expense";
 import {
   fetchExpensesFromLocalStorage,
@@ -42,17 +42,9 @@ export default function App() {
     localStorage.setItem("expenses", JSON.stringify(updatedExpenses));
   };
 
-  const handleDeleteExpense = (id: string) => {
-    const updatedExpenses = expenses.filter((e) => e.id !== id);
+  const handleExpensesChange = (updatedExpenses: Expense[]) => {
     setExpenses(updatedExpenses);
-    localStorage.setItem("expenses", JSON.stringify(updatedExpenses));
-  };
 
-  const handleEditExpense = (updated: Expense) => {
-    const updatedExpenses = expenses.map((e) =>
-      e.id === updated.id ? updated : e,
-    );
-    setExpenses(updatedExpenses);
     localStorage.setItem("expenses", JSON.stringify(updatedExpenses));
   };
 
@@ -160,10 +152,9 @@ export default function App() {
           </main>
 
           <div className="p-6">
-            <ExpenseList
+            <Expenses
               expenses={expenses}
-              onDeleteExpense={handleDeleteExpense}
-              onEditExpense={handleEditExpense}
+              onExpensesChange={handleExpensesChange}
               onToggleCategory={toggleCategory}
               categories={categories}
               selectedCategories={selectedCategories}
