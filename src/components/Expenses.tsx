@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import ExpenseItem from "./ExpenseItem";
-import type { Expense } from "@/types/expense";
+import Expense from "./Expense";
+import type { Expense as ExpenseType } from "@/types/expense";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -13,21 +13,17 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SlidersHorizontal, ArrowUpDown } from "lucide-react";
 
-type ExpenseListProps = {
-  expenses: Expense[];
+type ExpensesProps = {
+  expenses: ExpenseType[];
   categories: string[];
-  editingId: string | null;
   selectedCategories: string[];
   searchQuery: string;
   selectedMonth: string;
-  filteredExpenses: Expense[];
+  filteredExpenses: ExpenseType[];
   setSearchQuery: (query: string) => void;
   onSelectedMonth: (month: string) => void;
-  onDeleteExpense?: (id: string) => void;
-  onEditExpense?: (expense: Expense) => void;
-  onStartEditing: (id: string) => void;
-  onCancelEditing: () => void;
   onToggleCategory?: (category: string, checked: boolean) => void;
+  onExpensesChange: (expenses: ExpenseType[]) => void;
 };
 
 const containerVariants = {
@@ -39,22 +35,33 @@ const containerVariants = {
   },
 };
 
-export default function ExpenseList({
+export default function Expenses({
+  expenses,
   categories,
-  editingId,
   searchQuery,
   selectedCategories,
   selectedMonth,
   onSelectedMonth,
-  onDeleteExpense,
-  onEditExpense,
-  onCancelEditing,
+  onExpensesChange,
   onToggleCategory,
-  onStartEditing,
   filteredExpenses,
   setSearchQuery,
-}: ExpenseListProps) {
+}: ExpensesProps) {
   const [sortBy, setSortBy] = useState<string>("Newest");
+
+  const handleDeleteExpense = (id: string) => {
+    const updatedExpenses = expenses.filter((e) => e.id !== id);
+
+    onExpensesChange(updatedExpenses);
+  };
+
+  const handleEditExpense = (updated: ExpenseType) => {
+    const updatedExpenses = expenses.map((e) =>
+      e.id === updated.id ? updated : e,
+    );
+
+    onExpensesChange(updatedExpenses);
+  };
 
   const sortOptions = ["Newest", "Oldest", "Highest-amount", "Lowest-amount"];
 
@@ -187,14 +194,12 @@ export default function ExpenseList({
         >
           <AnimatePresence mode="popLayout">
             {sortedExpenses.map((expenseItem) => (
-              <ExpenseItem
+              <Expense
                 key={expenseItem.id}
                 expense={expenseItem}
-                editingId={editingId}
-                onDeleteExpense={onDeleteExpense}
-                onSaveExpense={onEditExpense}
-                onStartEditing={onStartEditing}
-                onCancelEditing={onCancelEditing}
+                onDeleteExpense={handleDeleteExpense}
+                onSaveExpense={handleEditExpense}
+                categories={categories}
               />
             ))}
           </AnimatePresence>

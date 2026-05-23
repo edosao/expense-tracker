@@ -1,38 +1,42 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Trash2, Edit, Tag } from "lucide-react";
 import type { Expense } from "@/types/expense";
+import { useState } from "react";
 
-type ExpenseItemProps = {
+type ExpenseProps = {
   expense: Expense;
-  editingId: string | null;
-  onDeleteExpense?: (id: string) => void;
-  onSaveExpense?: (expense: Expense) => void;
-  onStartEditing: (id: string) => void;
-  onCancelEditing: () => void;
+  categories: string[];
+  onDeleteExpense: (id: string) => void;
+  onSaveExpense: (expense: Expense) => void;
 };
 
-export default function ExpenseItem({
+export default function Expense({
   expense,
-  editingId,
   onDeleteExpense,
   onSaveExpense,
-  onStartEditing,
-  onCancelEditing,
-}: ExpenseItemProps) {
-  const [localExpense, setLocalExpense] = useState(expense);
+  categories,
+}: ExpenseProps) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [draft, setDraft] = useState<Expense>(expense);
 
   const handleSave = () => {
-    onSaveExpense?.(localExpense);
-    onCancelEditing();
+    onSaveExpense(draft);
+    setIsEditing(false);
   };
 
   const handleCancel = () => {
-    setLocalExpense(expense);
-    onCancelEditing();
+    setDraft(expense);
+    setIsEditing(false);
   };
 
   return (
@@ -45,33 +49,42 @@ export default function ExpenseItem({
       transition={{ duration: 0.25 }}
     >
       <Card
-        className={`p-4 ${
-          editingId === expense.id ? "ring-2 ring-primary bg-muted" : ""
-        }`}
+        className={`p-4 ${isEditing ? "ring-2 ring-primary bg-muted" : ""}`}
       >
-        {editingId === expense.id ? (
+        {isEditing ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="space-y-3"
           >
             <Input
-              value={localExpense.title}
-              onChange={(e) =>
-                setLocalExpense({ ...localExpense, title: e.target.value })
-              }
+              value={draft.title}
+              onChange={(e) => setDraft({ ...draft, title: e.target.value })}
             />
 
             <Input
               type="number"
-              value={localExpense.amount}
+              value={draft.amount}
               onChange={(e) =>
-                setLocalExpense({
-                  ...localExpense,
-                  amount: Number(e.target.value),
-                })
+                setDraft({ ...draft, amount: Number(e.target.value) })
               }
             />
+
+            <Select
+              value={draft.category}
+              onValueChange={(value) => setDraft({ ...draft, category: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select category" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map((cat) => (
+                  <SelectItem key={cat} value={cat}>
+                    <span className="capitalize">{cat}</span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
             <div className="flex gap-2">
               <motion.div whileTap={{ scale: 0.95 }} className="flex-1">
@@ -114,7 +127,7 @@ export default function ExpenseItem({
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => onStartEditing(expense.id)}
+                  onClick={() => setIsEditing(true)}
                 >
                   <Edit className="w-4 h-4" />
                 </Button>
@@ -124,7 +137,7 @@ export default function ExpenseItem({
                 <Button
                   size="sm"
                   variant="destructive"
-                  onClick={() => onDeleteExpense?.(expense.id)}
+                  onClick={() => onDeleteExpense(expense.id)}
                 >
                   <Trash2 className="w-4 h-4" />
                 </Button>

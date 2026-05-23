@@ -5,7 +5,7 @@ import Tabs from "./components/Tabs";
 import CategoryManager from "./components/CategoryManager";
 import ExpenseForm from "./components/ExpenseForm";
 import ExpenseSummary from "./components/ExpenseSummary";
-import ExpenseList from "./components/ExpenseList";
+import Expenses from "./components/Expenses";
 import type { ActiveTab, Expense } from "./types/expense";
 import {
   fetchExpensesFromLocalStorage,
@@ -28,7 +28,6 @@ export default function App() {
     return base.includes("other") ? base : [...base, "other"];
   });
 
-  const [editingId, setEditingId] = useState<string | null>(null);
   const [expenses, setExpenses] = useState<Expense[]>(
     fetchExpensesFromLocalStorage,
   );
@@ -37,29 +36,16 @@ export default function App() {
     storeInLocalStorage("categories", categories);
   }, [categories]);
 
-  useEffect(() => {
-    storeInLocalStorage("expenses", expenses);
-  }, [expenses]);
-
   const handleAddExpense = (newExpense: Expense) => {
-    setExpenses((prev) => [...prev, newExpense]);
+    const updatedExpenses = [...expenses, newExpense];
+    setExpenses(updatedExpenses);
+    localStorage.setItem("expenses", JSON.stringify(updatedExpenses));
   };
 
-  const handleDeleteExpense = (id: string) => {
-    setExpenses((prev) => prev.filter((e) => e.id !== id));
-  };
+  const handleExpensesChange = (updatedExpenses: Expense[]) => {
+    setExpenses(updatedExpenses);
 
-  const handleStartEditing = (id: string) => {
-    setEditingId(id);
-  };
-
-  const handleEditExpense = (updated: Expense) => {
-    setExpenses((prev) => prev.map((e) => (e.id === updated.id ? updated : e)));
-    setEditingId(null);
-  };
-
-  const handleCancelEditing = () => {
-    setEditingId(null);
+    localStorage.setItem("expenses", JSON.stringify(updatedExpenses));
   };
 
   const handleAddCategory = (category: string) => {
@@ -166,13 +152,9 @@ export default function App() {
           </main>
 
           <div className="p-6">
-            <ExpenseList
+            <Expenses
               expenses={expenses}
-              editingId={editingId}
-              onDeleteExpense={handleDeleteExpense}
-              onEditExpense={handleEditExpense}
-              onStartEditing={handleStartEditing}
-              onCancelEditing={handleCancelEditing}
+              onExpensesChange={handleExpensesChange}
               onToggleCategory={toggleCategory}
               categories={categories}
               selectedCategories={selectedCategories}
