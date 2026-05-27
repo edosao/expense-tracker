@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/select";
 import { PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { Expense } from "@/types/expense";
+import type { Expense, Note } from "@/types/expense";
 
 type ExpenseFormProps = {
   onAddExpense: (expense: Expense) => void;
@@ -22,7 +22,7 @@ function ExpenseForm({ onAddExpense, categories = [] }: ExpenseFormProps) {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("");
-
+  const [noteContent, setNoteContent] = useState("");
   const [error, setError] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -33,12 +33,25 @@ function ExpenseForm({ onAddExpense, categories = [] }: ExpenseFormProps) {
       return;
     }
 
-    const newExpense = {
-      id: crypto.randomUUID(),
+    const expenseId = crypto.randomUUID();
+
+    const notes: Note[] = noteContent.trim()
+      ? [
+          {
+            id: crypto.randomUUID(),
+            content: noteContent.trim(),
+            expense_id: expenseId,
+          },
+        ]
+      : [];
+
+    const newExpense: Expense = {
+      id: expenseId,
       title,
       amount: Number(amount),
       createdAt: Date.now(),
       category,
+      notes,
     };
 
     onAddExpense(newExpense);
@@ -46,6 +59,7 @@ function ExpenseForm({ onAddExpense, categories = [] }: ExpenseFormProps) {
     setTitle("");
     setAmount("");
     setCategory("");
+    setNoteContent("");
     setError("");
   };
 
@@ -71,13 +85,6 @@ function ExpenseForm({ onAddExpense, categories = [] }: ExpenseFormProps) {
             onChange={(e) => setAmount(e.target.value)}
           />
 
-          {/* <Input
-            placeholder="Date"
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-          /> */}
-
           <Select value={category} onValueChange={setCategory}>
             <SelectTrigger>
               <SelectValue placeholder="Select Category" />
@@ -90,6 +97,12 @@ function ExpenseForm({ onAddExpense, categories = [] }: ExpenseFormProps) {
               ))}
             </SelectContent>
           </Select>
+
+          <Input
+            placeholder="Add a note (optional)"
+            value={noteContent}
+            onChange={(e) => setNoteContent(e.target.value)}
+          />
 
           {error && <p className="text-sm text-red-500">{error}</p>}
 

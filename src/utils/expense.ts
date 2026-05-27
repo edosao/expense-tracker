@@ -2,7 +2,7 @@ import type { Expense } from "@/types/expense";
 
 export function getTotalByCategory(
   expenses: Expense[],
-  category: string
+  category: string,
 ): number {
   return expenses
     .filter((expense) => expense.category === category)
@@ -15,15 +15,18 @@ export function getTotalExpenses(expenses: Expense[]): number {
 
 export const fetchExpensesFromLocalStorage = () => {
   const expenses = retrieveFromLocalStorage("expenses");
-  if(!expenses) return [];
+  if (!expenses) return [];
 
-  return JSON.parse(expenses)
+  return JSON.parse(expenses).map((e: Expense) => ({
+    ...e,
+    notes: e.notes ?? [],
+  }));
 };
 
 export const storeInLocalStorage = <T>(keyname: string, expenses: T) => {
-  localStorage.setItem(keyname, JSON.stringify(expenses))
-}
+  localStorage.setItem(keyname, JSON.stringify(expenses));
+};
 
 export const retrieveFromLocalStorage = (keyname: string) => {
-  return localStorage.getItem(keyname)
-}
+  return localStorage.getItem(keyname);
+};
