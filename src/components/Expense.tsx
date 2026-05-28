@@ -9,9 +9,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Trash2, Edit, Tag } from "lucide-react";
-import type { Expense } from "@/types/expense";
+import { Trash2, Edit, Tag, Plus } from "lucide-react";
+import type { Expense, INote } from "@/types/expense";
 import { useState } from "react";
+import Note from "./Note";
 
 type ExpenseProps = {
   expense: Expense;
@@ -28,6 +29,7 @@ export default function Expense({
 }: ExpenseProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState<Expense>(expense);
+  const [newNoteContent, setNewNoteContent] = useState("");
 
   const handleSave = () => {
     onSaveExpense(draft);
@@ -36,7 +38,32 @@ export default function Expense({
 
   const handleCancel = () => {
     setDraft(expense);
+    setNewNoteContent("");
     setIsEditing(false);
+  };
+
+  const handleAddNote = () => {
+    if (!newNoteContent.trim()) return;
+
+    const newNote: INote = {
+      id: crypto.randomUUID(),
+      content: newNoteContent.trim(),
+      expense_id: expense.id,
+    };
+
+    setDraft({ ...draft, notes: [...draft.notes, newNote] });
+    setNewNoteContent("");
+  };
+
+  const handleEditNote = (noteId: string, content: string) => {
+    setDraft({
+      ...draft,
+      notes: draft.notes.map((n) => (n.id === noteId ? { ...n, content } : n)),
+    });
+  };
+
+  const handleDeleteNote = (noteId: string) => {
+    setDraft({ ...draft, notes: draft.notes.filter((n) => n.id !== noteId) });
   };
 
   return (
@@ -86,6 +113,37 @@ export default function Expense({
               </SelectContent>
             </Select>
 
+            <div className="space-y-2">
+              <p className="text-sm font-medium">Notes</p>
+
+              {draft.notes.map((note) => (
+                <Note
+                  key={note.id}
+                  note={note}
+                  onEditNote={handleEditNote}
+                  onDeleteNote={handleDeleteNote}
+                />
+              ))}
+
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Add a note..."
+                  value={newNoteContent}
+                  onChange={(e) => setNewNoteContent(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleAddNote()}
+                  className="h-8 text-sm"
+                />
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-8 w-8 p-0"
+                  onClick={handleAddNote}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+
             <div className="flex gap-2">
               <motion.div whileTap={{ scale: 0.95 }} className="flex-1">
                 <Button size="sm" onClick={handleSave} className="w-full">
@@ -106,7 +164,7 @@ export default function Expense({
             </div>
           </motion.div>
         ) : (
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-start">
             <div className="flex-1">
               <h3 className="font-medium flex items-center gap-2">
                 <Tag className="w-4 h-4 text-muted-foreground" />
@@ -116,6 +174,19 @@ export default function Expense({
                 {expense.category} •{" "}
                 {new Date(expense.createdAt).toLocaleDateString()}
               </p>
+
+              {expense.notes.length > 0 && (
+                <div className="mt-2 flex flex-col gap-1.5">
+                  {expense.notes.map((note) => (
+                    <span
+                      key={note.id}
+                      className="items-center rounded-full bg-muted px-2.5 py-0.5 text-xs text-muted-foreground"
+                    >
+                      {note.content}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="flex items-center gap-2">
@@ -127,7 +198,10 @@ export default function Expense({
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => setIsEditing(true)}
+                  onClick={() => {
+                    setDraft(expense);
+                    setIsEditing(true);
+                  }}
                 >
                   <Edit className="w-4 h-4" />
                 </Button>
