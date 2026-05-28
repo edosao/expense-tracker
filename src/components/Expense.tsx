@@ -29,8 +29,10 @@ export default function Expense({
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState<Expense>(expense);
   const [newNoteContent, setNewNoteContent] = useState("");
-  const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
-  const [editingNoteContent, setEditingNoteContent] = useState("");
+  const [editingNote, setEditingNote] = useState<{
+    id: string;
+    content: string;
+  } | null>(null);
 
   const handleSave = () => {
     onSaveExpense(draft);
@@ -40,7 +42,7 @@ export default function Expense({
   const handleCancel = () => {
     setDraft(expense);
     setNewNoteContent("");
-    setEditingNoteId(null);
+    setEditingNote(null);
     setIsEditing(false);
   };
 
@@ -62,21 +64,19 @@ export default function Expense({
   };
 
   const handleStartEditNote = (note: Note) => {
-    setEditingNoteId(note.id);
-    setEditingNoteContent(note.content);
+    setEditingNote({ id: note.id, content: note.content });
   };
 
   const handleSaveNoteEdit = (noteId: string) => {
-    if (!editingNoteContent.trim()) return;
+    if (!editingNote?.content.trim()) return;
 
     setDraft({
       ...draft,
       notes: draft.notes.map((n) =>
-        n.id === noteId ? { ...n, content: editingNoteContent.trim() } : n,
+        n.id === noteId ? { ...n, content: editingNote.content.trim() } : n,
       ),
     });
-    setEditingNoteId(null);
-    setEditingNoteContent("");
+    setEditingNote(null);
   };
 
   return (
@@ -139,12 +139,15 @@ export default function Expense({
                     exit={{ opacity: 0, height: 0 }}
                     className="flex items-center gap-2"
                   >
-                    {editingNoteId === note.id ? (
+                    {editingNote?.id === note.id ? (
                       <>
                         <Input
-                          value={editingNoteContent}
+                          value={editingNote.content}
                           onChange={(e) =>
-                            setEditingNoteContent(e.target.value)
+                            setEditingNote({
+                              ...editingNote,
+                              content: e.target.value,
+                            })
                           }
                           className="h-7 text-sm"
                           autoFocus
@@ -161,7 +164,7 @@ export default function Expense({
                           size="sm"
                           variant="ghost"
                           className="h-7 w-7 p-0"
-                          onClick={() => setEditingNoteId(null)}
+                          onClick={() => setEditingNote(null)}
                         >
                           <X className="h-3 w-3" />
                         </Button>
