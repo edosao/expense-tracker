@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,9 +9,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Trash2, Edit, Tag, Plus, X, Pencil, Check } from "lucide-react";
-import type { Expense, Note } from "@/types/expense";
+import { Trash2, Edit, Tag, Plus } from "lucide-react";
+import type { Expense, Note as NoteType } from "@/types/expense";
 import { useState } from "react";
+import Note from "./Note";
 
 type ExpenseProps = {
   expense: Expense;
@@ -29,10 +30,6 @@ export default function Expense({
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState<Expense>(expense);
   const [newNoteContent, setNewNoteContent] = useState("");
-  const [editingNote, setEditingNote] = useState<{
-    id: string;
-    content: string;
-  } | null>(null);
 
   const handleSave = () => {
     onSaveExpense(draft);
@@ -42,14 +39,13 @@ export default function Expense({
   const handleCancel = () => {
     setDraft(expense);
     setNewNoteContent("");
-    setEditingNote(null);
     setIsEditing(false);
   };
 
   const handleAddNote = () => {
     if (!newNoteContent.trim()) return;
 
-    const newNote: Note = {
+    const newNote: NoteType = {
       id: crypto.randomUUID(),
       content: newNoteContent.trim(),
       expense_id: expense.id,
@@ -59,24 +55,15 @@ export default function Expense({
     setNewNoteContent("");
   };
 
-  const handleDeleteNote = (noteId: string) => {
-    setDraft({ ...draft, notes: draft.notes.filter((n) => n.id !== noteId) });
-  };
-
-  const handleStartEditNote = (note: Note) => {
-    setEditingNote({ id: note.id, content: note.content });
-  };
-
-  const handleSaveNoteEdit = (noteId: string) => {
-    if (!editingNote?.content.trim()) return;
-
+  const handleEditNote = (noteId: string, content: string) => {
     setDraft({
       ...draft,
-      notes: draft.notes.map((n) =>
-        n.id === noteId ? { ...n, content: editingNote.content.trim() } : n,
-      ),
+      notes: draft.notes.map((n) => (n.id === noteId ? { ...n, content } : n)),
     });
-    setEditingNote(null);
+  };
+
+  const handleDeleteNote = (noteId: string) => {
+    setDraft({ ...draft, notes: draft.notes.filter((n) => n.id !== noteId) });
   };
 
   return (
@@ -126,77 +113,18 @@ export default function Expense({
               </SelectContent>
             </Select>
 
-            {/* Notes section */}
             <div className="space-y-2">
               <p className="text-sm font-medium">Notes</p>
 
-              <AnimatePresence>
-                {draft.notes.map((note) => (
-                  <motion.div
-                    key={note.id}
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    className="flex items-center gap-2"
-                  >
-                    {editingNote?.id === note.id ? (
-                      <>
-                        <Input
-                          value={editingNote.content}
-                          onChange={(e) =>
-                            setEditingNote({
-                              ...editingNote,
-                              content: e.target.value,
-                            })
-                          }
-                          className="h-7 text-sm"
-                          autoFocus
-                        />
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="h-7 w-7 p-0"
-                          onClick={() => handleSaveNoteEdit(note.id)}
-                        >
-                          <Check className="h-3 w-3" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="h-7 w-7 p-0"
-                          onClick={() => setEditingNote(null)}
-                        >
-                          <X className="h-3 w-3" />
-                        </Button>
-                      </>
-                    ) : (
-                      <>
-                        <p className="flex-1 text-sm text-muted-foreground">
-                          {note.content}
-                        </p>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="h-7 w-7 p-0"
-                          onClick={() => handleStartEditNote(note)}
-                        >
-                          <Pencil className="h-3 w-3" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="h-7 w-7 p-0 text-destructive hover:text-destructive"
-                          onClick={() => handleDeleteNote(note.id)}
-                        >
-                          <X className="h-3 w-3" />
-                        </Button>
-                      </>
-                    )}
-                  </motion.div>
-                ))}
-              </AnimatePresence>
+              {draft.notes.map((note) => (
+                <Note
+                  key={note.id}
+                  note={note}
+                  onEditNote={handleEditNote}
+                  onDeleteNote={handleDeleteNote}
+                />
+              ))}
 
-              {/* Add new note */}
               <div className="flex gap-2">
                 <Input
                   placeholder="Add a note..."
@@ -248,11 +176,11 @@ export default function Expense({
               </p>
 
               {expense.notes.length > 0 && (
-                <div className="mt-2 flex flex-col flex-wrap gap-1.5">
+                <div className="mt-2 flex flex-col gap-1.5">
                   {expense.notes.map((note) => (
                     <span
                       key={note.id}
-                      className=" items-center rounded-full bg-muted px-2.5 py-0.5 text-xs text-muted-foreground"
+                      className="items-center rounded-full bg-muted px-2.5 py-0.5 text-xs text-muted-foreground"
                     >
                       {note.content}
                     </span>
