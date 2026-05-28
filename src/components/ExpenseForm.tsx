@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/select";
 import { PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { Expense, Note } from "@/types/expense";
+import type { Expense, INote } from "@/types/expense";
 
 type ExpenseFormProps = {
   onAddExpense: (expense: Expense) => void;
@@ -35,7 +35,7 @@ function ExpenseForm({ onAddExpense, categories = [] }: ExpenseFormProps) {
 
     const expenseId = crypto.randomUUID();
 
-    const notes: Note[] = noteContent.trim()
+    const notes: INote[] = noteContent.trim()
       ? [
           {
             id: crypto.randomUUID(),
