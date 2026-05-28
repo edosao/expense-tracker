@@ -1,4 +1,4 @@
-export interface Note {
+export interface INote {
   id: string;
   content: string;
   expense_id: string;
@@ -10,7 +10,7 @@ export type Expense = {
   amount: number;
   category: string;
   createdAt: number;
-  notes: Note[];
+  notes: INote[];
 };
 
 export type ActiveTab = "expenses" | "categories";

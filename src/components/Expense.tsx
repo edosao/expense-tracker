@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Trash2, Edit, Tag, Plus } from "lucide-react";
-import type { Expense, Note as NoteType } from "@/types/expense";
+import type { Expense, INote } from "@/types/expense";
 import { useState } from "react";
 import Note from "./Note";
 
@@ -45,7 +45,7 @@ export default function Expense({
   const handleAddNote = () => {
     if (!newNoteContent.trim()) return;
 
-    const newNote: NoteType = {
+    const newNote: INote = {
       id: crypto.randomUUID(),
       content: newNoteContent.trim(),
       expense_id: expense.id,

@@ -2,10 +2,10 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Pencil, X, Check } from "lucide-react";
-import type { Note as NoteType } from "@/types/expense";
+import type { INote } from "@/types/expense";
 
 type NoteProps = {
-  note: NoteType;
+  note: INote;
   onEditNote: (noteId: string, content: string) => void;
   onDeleteNote: (noteId: string) => void;
 };
