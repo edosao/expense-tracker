@@ -1,4 +1,5 @@
 import type { Expense } from "@/types/expense";
+import Papa from "papaparse";
 
 export function getTotalByCategory(
   expenses: Expense[],
@@ -29,4 +30,29 @@ export const storeInLocalStorage = <T>(keyname: string, expenses: T) => {
 
 export const retrieveFromLocalStorage = (keyname: string) => {
   return localStorage.getItem(keyname);
+};
+
+export const exportToCSV = (expenses: Expense[]) => {
+  const headers = ["title", "amount", "date", "category"];
+
+  const rows = expenses.map((expense) => [
+    expense.title,
+    expense.amount,
+    new Date(expense.createdAt).toISOString().split("T")[0],
+    expense.category,
+  ]);
+
+  const csv = Papa.unparse({ fields: headers, data: rows });
+
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  const date = new Date().toISOString().split("T")[0];
+
+  link.href = url;
+  link.setAttribute("download", `expenses-${date}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 };

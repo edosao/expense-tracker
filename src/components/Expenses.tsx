@@ -11,7 +11,8 @@ import {
   DropdownMenuTrigger,
   DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
-import { SlidersHorizontal, ArrowUpDown } from "lucide-react";
+import { SlidersHorizontal, ArrowUpDown, Download } from "lucide-react";
+import { exportToCSV } from "@/utils/expense";
 
 type ExpensesProps = {
   expenses: ExpenseType[];
@@ -51,7 +52,6 @@ export default function Expenses({
 
   const handleDeleteExpense = (id: string) => {
     const updatedExpenses = expenses.filter((e) => e.id !== id);
-
     onExpensesChange(updatedExpenses);
   };
 
@@ -59,31 +59,24 @@ export default function Expenses({
     const updatedExpenses = expenses.map((e) =>
       e.id === updated.id ? updated : e,
     );
-
     onExpensesChange(updatedExpenses);
   };
 
   const sortOptions = ["Newest", "Oldest", "Highest-amount", "Lowest-amount"];
 
-  const sortByNewest = () => {
-    return [...filteredExpenses].sort((a, b) => b.createdAt - a.createdAt);
-  };
+  const sortByNewest = () =>
+    [...filteredExpenses].sort((a, b) => b.createdAt - a.createdAt);
 
-  const sortByOldest = () => {
-    return [...filteredExpenses].sort((a, b) => a.createdAt - b.createdAt);
-  };
+  const sortByOldest = () =>
+    [...filteredExpenses].sort((a, b) => a.createdAt - b.createdAt);
 
-  const sortByHighestAmount = () => {
-    return [...filteredExpenses].sort((a, b) => b.amount - a.amount);
-  };
+  const sortByHighestAmount = () =>
+    [...filteredExpenses].sort((a, b) => b.amount - a.amount);
 
-  const sortByLowestAmount = () => {
-    return [...filteredExpenses].sort((a, b) => a.amount - b.amount);
-  };
+  const sortByLowestAmount = () =>
+    [...filteredExpenses].sort((a, b) => a.amount - b.amount);
 
-  const handleSorting = (option: string) => {
-    setSortBy(option);
-  };
+  const handleSorting = (option: string) => setSortBy(option);
 
   const getSortedExpenses = () => {
     switch (sortBy) {
@@ -116,13 +109,23 @@ export default function Expenses({
             className="h-8 w-[180px]"
           />
 
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-8 w-10"
+            title="Export to CSV"
+            onClick={() => exportToCSV(filteredExpenses)}
+            disabled={filteredExpenses.length === 0}
+          >
+            <Download className="h-4 w-4" />
+          </Button>
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button size="sm" variant="outline" className="h-8 w-10">
                 <ArrowUpDown className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-
             <DropdownMenuContent align="end" className="w-40">
               {sortOptions.map((option) => (
                 <DropdownMenuCheckboxItem
@@ -142,7 +145,6 @@ export default function Expenses({
                 <SlidersHorizontal className="h-5 w-5" />
               </Button>
             </DropdownMenuTrigger>
-
             <DropdownMenuContent align="end" className="w-40">
               {categories.map((category) => (
                 <DropdownMenuCheckboxItem
@@ -164,12 +166,9 @@ export default function Expenses({
         <Input
           type="month"
           value={selectedMonth === "all" ? "" : selectedMonth}
-          onChange={(e) => {
-            onSelectedMonth(e.target.value || "all");
-          }}
+          onChange={(e) => onSelectedMonth(e.target.value || "all")}
           className="w-[180px]"
         />
-
         <Button
           variant="outline"
           size="sm"
