@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Trash2, Edit2Icon, Check, X } from "lucide-react";
+import ConfirmDialog from "./ConfirmDialog";
 
 type CategoryListProps = {
   categories: string[];
@@ -16,21 +17,16 @@ const CategoryList = ({
 }: CategoryListProps) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [editedValue, setEditedValue] = useState("");
+  const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
 
   const handleSelectCategory = (cat: string) => {
     setSelectedCategory(cat);
     setEditedValue(cat);
   };
 
-  const handleDeleteCategory = (cat: string) => {
-    onDeleteCategory(cat);
-  };
-
   const handleSaveEdit = () => {
     if (!editedValue.trim() || !selectedCategory) return;
-
     onEditCategory(selectedCategory, editedValue.trim());
-
     setSelectedCategory(null);
     setEditedValue("");
   };
@@ -63,9 +59,7 @@ const CategoryList = ({
                 <Button
                   size="icon"
                   variant="secondary"
-                  onClick={() => {
-                    handleCancelEdit();
-                  }}
+                  onClick={handleCancelEdit}
                 >
                   <X className="w-4 h-4" />
                 </Button>
@@ -91,7 +85,7 @@ const CategoryList = ({
                   size="icon"
                   variant="destructive"
                   disabled={cat === "other"}
-                  onClick={() => handleDeleteCategory(cat)}
+                  onClick={() => setCategoryToDelete(cat)}
                 >
                   <Trash2 className="w-4 h-4" />
                 </Button>
@@ -100,6 +94,17 @@ const CategoryList = ({
           )}
         </div>
       ))}
+
+      <ConfirmDialog
+        open={categoryToDelete !== null}
+        title="Delete Category"
+        description={`Are you sure you want to delete "${categoryToDelete}"? All expenses in this category will be moved to "Other". This action cannot be undone.`}
+        onConfirm={() => {
+          if (categoryToDelete) onDeleteCategory(categoryToDelete);
+          setCategoryToDelete(null);
+        }}
+        onCancel={() => setCategoryToDelete(null)}
+      />
     </div>
   );
 };
