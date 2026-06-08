@@ -17,6 +17,7 @@ const CategoryList = ({
 }: CategoryListProps) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [editedValue, setEditedValue] = useState("");
+  const [showConfirm, setShowConfirm] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
 
   const handleSelectCategory = (cat: string) => {
@@ -36,6 +37,22 @@ const CategoryList = ({
     setEditedValue("");
   };
 
+  const handleDeleteClick = (cat: string) => {
+    setCategoryToDelete(cat);
+    setShowConfirm(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (categoryToDelete) onDeleteCategory(categoryToDelete);
+    setCategoryToDelete(null);
+    setShowConfirm(false);
+  };
+
+  const handleCancelDelete = () => {
+    setCategoryToDelete(null);
+    setShowConfirm(false);
+  };
+
   return (
     <div>
       {categories.map((cat) => (
@@ -50,12 +67,10 @@ const CategoryList = ({
                 onChange={(e) => setEditedValue(e.target.value)}
                 className="max-w-[150px]"
               />
-
               <div className="flex gap-2">
                 <Button size="icon" variant="default" onClick={handleSaveEdit}>
                   <Check className="w-4 h-4" />
                 </Button>
-
                 <Button
                   size="icon"
                   variant="secondary"
@@ -70,7 +85,6 @@ const CategoryList = ({
               <span className="capitalize">
                 {cat === "other" ? "Other (default)" : cat}
               </span>
-
               <div className="flex gap-2">
                 <Button
                   size="icon"
@@ -80,12 +94,11 @@ const CategoryList = ({
                 >
                   <Edit2Icon className="w-4 h-4" />
                 </Button>
-
                 <Button
                   size="icon"
                   variant="destructive"
                   disabled={cat === "other"}
-                  onClick={() => setCategoryToDelete(cat)}
+                  onClick={() => handleDeleteClick(cat)}
                 >
                   <Trash2 className="w-4 h-4" />
                 </Button>
@@ -96,14 +109,11 @@ const CategoryList = ({
       ))}
 
       <ConfirmDialog
-        open={categoryToDelete !== null}
+        open={showConfirm}
         title="Delete Category"
         description={`Are you sure you want to delete "${categoryToDelete}"? All expenses in this category will be moved to "Other". This action cannot be undone.`}
-        onConfirm={() => {
-          if (categoryToDelete) onDeleteCategory(categoryToDelete);
-          setCategoryToDelete(null);
-        }}
-        onCancel={() => setCategoryToDelete(null)}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
       />
     </div>
   );
