@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Trash2, Edit2Icon, Check, X } from "lucide-react";
+import ConfirmDialog from "./ConfirmDialog";
 
 type CategoryListProps = {
   categories: string[];
@@ -16,21 +17,17 @@ const CategoryList = ({
 }: CategoryListProps) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [editedValue, setEditedValue] = useState("");
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
 
   const handleSelectCategory = (cat: string) => {
     setSelectedCategory(cat);
     setEditedValue(cat);
   };
 
-  const handleDeleteCategory = (cat: string) => {
-    onDeleteCategory(cat);
-  };
-
   const handleSaveEdit = () => {
     if (!editedValue.trim() || !selectedCategory) return;
-
     onEditCategory(selectedCategory, editedValue.trim());
-
     setSelectedCategory(null);
     setEditedValue("");
   };
@@ -38,6 +35,22 @@ const CategoryList = ({
   const handleCancelEdit = () => {
     setSelectedCategory(null);
     setEditedValue("");
+  };
+
+  const handleDeleteClick = (cat: string) => {
+    setCategoryToDelete(cat);
+    setShowConfirm(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (categoryToDelete) onDeleteCategory(categoryToDelete);
+    setCategoryToDelete(null);
+    setShowConfirm(false);
+  };
+
+  const handleCancelDelete = () => {
+    setCategoryToDelete(null);
+    setShowConfirm(false);
   };
 
   return (
@@ -54,18 +67,14 @@ const CategoryList = ({
                 onChange={(e) => setEditedValue(e.target.value)}
                 className="max-w-[150px]"
               />
-
               <div className="flex gap-2">
                 <Button size="icon" variant="default" onClick={handleSaveEdit}>
                   <Check className="w-4 h-4" />
                 </Button>
-
                 <Button
                   size="icon"
                   variant="secondary"
-                  onClick={() => {
-                    handleCancelEdit();
-                  }}
+                  onClick={handleCancelEdit}
                 >
                   <X className="w-4 h-4" />
                 </Button>
@@ -76,7 +85,6 @@ const CategoryList = ({
               <span className="capitalize">
                 {cat === "other" ? "Other (default)" : cat}
               </span>
-
               <div className="flex gap-2">
                 <Button
                   size="icon"
@@ -86,12 +94,11 @@ const CategoryList = ({
                 >
                   <Edit2Icon className="w-4 h-4" />
                 </Button>
-
                 <Button
                   size="icon"
                   variant="destructive"
                   disabled={cat === "other"}
-                  onClick={() => handleDeleteCategory(cat)}
+                  onClick={() => handleDeleteClick(cat)}
                 >
                   <Trash2 className="w-4 h-4" />
                 </Button>
@@ -100,6 +107,14 @@ const CategoryList = ({
           )}
         </div>
       ))}
+
+      <ConfirmDialog
+        open={showConfirm}
+        title="Delete Category"
+        description={`Are you sure you want to delete "${categoryToDelete}"? All expenses in this category will be moved to "Other". This action cannot be undone.`}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+      />
     </div>
   );
 };
