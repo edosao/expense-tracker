@@ -5,12 +5,29 @@ import type { Expense } from "@/types/expense";
 import { BarChart3, Utensils, Car, Receipt, Clapperboard } from "lucide-react";
 import { getTotalByCategory, getTotalExpenses } from "@/utils/expense";
 import BudgetDialog from "./BudgetDialog";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  Cell,
+} from "recharts";
 
 const categoryIcons: Record<string, React.ReactNode> = {
   food: <Utensils className="h-4 w-4" />,
   transport: <Car className="h-4 w-4" />,
   bills: <Receipt className="h-4 w-4" />,
   entertainment: <Clapperboard className="h-4 w-4" />,
+};
+
+const CATEGORY_COLORS: Record<string, string> = {
+  food: "#f97316",
+  transport: "#3b82f6",
+  bills: "#8b5cf6",
+  entertainment: "#ec4899",
+  other: "#6b7280",
 };
 
 export default function ExpenseSummary({
@@ -43,11 +60,7 @@ export default function ExpenseSummary({
     category: string,
     amount: number,
   ) => {
-    const budgetEntry = {
-      month,
-      category,
-      amount,
-    };
+    const budgetEntry = { month, category, amount };
 
     const updated = {
       ...allMonthBudgets,
@@ -76,9 +89,16 @@ export default function ExpenseSummary({
     {} as Record<string, number>,
   );
 
+  const chartData = Object.entries(allCategoryTotals).map(
+    ([category, amount]) => ({
+      category,
+      amount,
+    }),
+  );
+
   return (
     <>
-      <Card className="p-6 space-y-5 max-h-[500px] my-auto overflow-y-auto">
+      <Card className="p-6 space-y-5 max-h-[700px] my-auto overflow-y-auto">
         <div className="flex items-center gap-2">
           <BarChart3 className="h-5 w-5 text-primary" />
           <h2 className="text-lg font-semibold">Summary</h2>
@@ -195,6 +215,48 @@ export default function ExpenseSummary({
             );
           })}
         </div>
+
+        {/* Bar Chart */}
+        {selectedMonth !== "all" && (
+          <div className="space-y-2">
+            <p className="text-sm font-medium">Spending by Category</p>
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart
+                data={chartData}
+                margin={{ top: 4, right: 16, left: 0, bottom: 4 }}
+              >
+                <XAxis
+                  dataKey="category"
+                  tick={{ fontSize: 11 }}
+                  tickFormatter={(val) =>
+                    val.charAt(0).toUpperCase() + val.slice(1)
+                  }
+                />
+                <YAxis
+                  tick={{ fontSize: 11 }}
+                  tickFormatter={(val) => `$${val}`}
+                />
+                <Tooltip
+                  formatter={(value) => [
+                    `$${Number(value).toFixed(2)}`,
+                    "Spent",
+                  ]}
+                  labelFormatter={(label) =>
+                    label.charAt(0).toUpperCase() + label.slice(1)
+                  }
+                />
+                <Bar dataKey="amount" radius={[4, 4, 0, 0]}>
+                  {chartData.map((entry) => (
+                    <Cell
+                      key={entry.category}
+                      fill={CATEGORY_COLORS[entry.category] ?? "#6b7280"}
+                    />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        )}
       </Card>
 
       <BudgetDialog
