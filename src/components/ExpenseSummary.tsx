@@ -22,13 +22,16 @@ const categoryIcons: Record<string, React.ReactNode> = {
   entertainment: <Clapperboard className="h-4 w-4" />,
 };
 
-const CATEGORY_COLORS: Record<string, string> = {
-  food: "#f97316",
-  transport: "#3b82f6",
-  bills: "#8b5cf6",
-  entertainment: "#ec4899",
-  other: "#6b7280",
-};
+const CATEGORY_COLORS: string[] = [
+  "#f97316",
+  "#3b82f6",
+  "#8b5cf6",
+  "#ec4899",
+  "#6b7280",
+  "#10b981",
+  "#f59e0b",
+  "#ef4444",
+];
 
 export default function ExpenseSummary({
   filteredExpenses,
@@ -246,10 +249,10 @@ export default function ExpenseSummary({
                   }
                 />
                 <Bar dataKey="amount" radius={[4, 4, 0, 0]}>
-                  {chartData.map((entry) => (
+                  {chartData.map((entry, index) => (
                     <Cell
                       key={entry.category}
-                      fill={CATEGORY_COLORS[entry.category] ?? "#6b7280"}
+                      fill={CATEGORY_COLORS[index % CATEGORY_COLORS.length]}
                     />
                   ))}
                 </Bar>
