@@ -99,6 +99,10 @@ export default function ExpenseSummary({
     }),
   );
 
+  const getCategoryColors = (index: number) => {
+    return CATEGORY_COLORS[index % CATEGORY_COLORS.length];
+  };
+
   return (
     <>
       <Card className="p-6 space-y-5 max-h-[700px] my-auto overflow-y-auto">
@@ -252,7 +256,7 @@ export default function ExpenseSummary({
                   {chartData.map((entry, index) => (
                     <Cell
                       key={entry.category}
-                      fill={CATEGORY_COLORS[index % CATEGORY_COLORS.length]}
+                      fill={getCategoryColors(index)}
                     />
                   ))}
                 </Bar>
