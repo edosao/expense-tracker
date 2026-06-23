@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Card } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -13,12 +18,19 @@ import { PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Expense, INote } from "@/types/expense";
 
-type ExpenseFormProps = {
+type AddExpenseDialogProps = {
+  open: boolean;
+  onClose: () => void;
   onAddExpense: (expense: Expense) => void;
   categories: string[];
 };
 
-function ExpenseForm({ onAddExpense, categories = [] }: ExpenseFormProps) {
+export default function AddExpenseDialog({
+  open,
+  onClose,
+  onAddExpense,
+  categories = [],
+}: AddExpenseDialogProps) {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("");
@@ -55,22 +67,31 @@ function ExpenseForm({ onAddExpense, categories = [] }: ExpenseFormProps) {
     };
 
     onAddExpense(newExpense);
-
     setTitle("");
     setAmount("");
     setCategory("");
     setNoteContent("");
     setError("");
+    onClose();
+  };
+
+  const handleClose = () => {
+    setTitle("");
+    setAmount("");
+    setCategory("");
+    setNoteContent("");
+    setError("");
+    onClose();
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.96 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.3 }}
-    >
-      <Card className="p-5 w-full max-w-md space-y-4">
-        <form onSubmit={handleSubmit} className="space-y-4">
+    <Dialog open={open} onOpenChange={handleClose}>
+      <DialogContent className="sm:max-w-[400px]">
+        <DialogHeader>
+          <DialogTitle>Add Expense</DialogTitle>
+        </DialogHeader>
+
+        <form onSubmit={handleSubmit} className="space-y-3 pt-2">
           <Input
             placeholder="Title"
             value={title}
@@ -90,7 +111,7 @@ function ExpenseForm({ onAddExpense, categories = [] }: ExpenseFormProps) {
               <SelectValue placeholder="Select Category" />
             </SelectTrigger>
             <SelectContent>
-              {categories.map((cat: string) => (
+              {categories.map((cat) => (
                 <SelectItem key={cat} value={cat}>
                   {cat.charAt(0).toUpperCase() + cat.slice(1)}
                 </SelectItem>
@@ -104,7 +125,7 @@ function ExpenseForm({ onAddExpense, categories = [] }: ExpenseFormProps) {
             onChange={(e) => setNoteContent(e.target.value)}
           />
 
-          {error && <p className="text-sm text-red-500">{error}</p>}
+          {error && <p className="text-sm text-destructive">{error}</p>}
 
           <motion.div whileTap={{ scale: 0.95 }}>
             <Button type="submit" className="w-full gap-2">
@@ -113,9 +134,7 @@ function ExpenseForm({ onAddExpense, categories = [] }: ExpenseFormProps) {
             </Button>
           </motion.div>
         </form>
-      </Card>
-    </motion.div>
+      </DialogContent>
+    </Dialog>
   );
 }
-
-export default ExpenseForm;

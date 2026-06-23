@@ -66,13 +66,10 @@ export default function Expenses({
 
   const sortByNewest = () =>
     [...filteredExpenses].sort((a, b) => b.createdAt - a.createdAt);
-
   const sortByOldest = () =>
     [...filteredExpenses].sort((a, b) => a.createdAt - b.createdAt);
-
   const sortByHighestAmount = () =>
     [...filteredExpenses].sort((a, b) => b.amount - a.amount);
-
   const sortByLowestAmount = () =>
     [...filteredExpenses].sort((a, b) => a.amount - b.amount);
 
@@ -97,85 +94,90 @@ export default function Expenses({
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between mb-4 border-b border-muted">
-        <h2 className="text-xl font-bold mb-3 pb-2">💰 Expenses</h2>
+      {/* Header row */}
+      <div className="space-y-3 border-b border-muted pb-4">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-bold">💰 Expenses</h2>
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-8 w-10"
+              title="Export to CSV"
+              onClick={() => exportToCSV(filteredExpenses)}
+              disabled={filteredExpenses.length === 0}
+            >
+              <Download className="h-4 w-4" />
+            </Button>
 
-        <div className="flex gap-2 items-center">
-          <Input
-            type="text"
-            placeholder="Search expenses..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="h-8 w-[180px]"
-          />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button size="sm" variant="outline" className="h-8 w-10">
+                  <ArrowUpDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-40">
+                {sortOptions.map((option) => (
+                  <DropdownMenuCheckboxItem
+                    key={option}
+                    checked={sortBy === option}
+                    onCheckedChange={() => handleSorting(option)}
+                  >
+                    <span>{option}</span>
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
 
-          <Button
-            size="sm"
-            variant="outline"
-            className="h-8 w-10"
-            title="Export to CSV"
-            onClick={() => exportToCSV(filteredExpenses)}
-            disabled={filteredExpenses.length === 0}
-          >
-            <Download className="h-4 w-4" />
-          </Button>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button size="sm" variant="outline" className="h-8 w-10">
-                <ArrowUpDown className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-40">
-              {sortOptions.map((option) => (
-                <DropdownMenuCheckboxItem
-                  key={option}
-                  checked={sortBy === option}
-                  onCheckedChange={() => handleSorting(option)}
-                >
-                  <span>{option}</span>
-                </DropdownMenuCheckboxItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button size="sm" variant="outline" className="h-8 w-10">
-                <SlidersHorizontal className="h-5 w-5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-40">
-              {categories.map((category) => (
-                <DropdownMenuCheckboxItem
-                  key={category}
-                  checked={selectedCategories.includes(category)}
-                  onCheckedChange={(checked) =>
-                    onToggleCategory?.(category, checked)
-                  }
-                >
-                  <span className="capitalize">{category}</span>
-                </DropdownMenuCheckboxItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button size="sm" variant="outline" className="h-8 w-10">
+                  <SlidersHorizontal className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-40">
+                {categories.map((category) => (
+                  <DropdownMenuCheckboxItem
+                    key={category}
+                    checked={selectedCategories.includes(category)}
+                    onCheckedChange={(checked) =>
+                      onToggleCategory?.(category, checked)
+                    }
+                  >
+                    <span className="capitalize">{category}</span>
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
-      </div>
 
-      <div className="flex items-center gap-2">
+        {/* Search */}
         <Input
-          type="month"
-          value={selectedMonth === "all" ? "" : selectedMonth}
-          onChange={(e) => onSelectedMonth(e.target.value || "all")}
-          className="w-[180px]"
+          type="text"
+          placeholder="Search expenses..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full"
         />
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onSelectedMonth("all")}
-        >
-          All Months
-        </Button>
+
+        {/* Month filter */}
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-muted-foreground shrink-0">Month:</span>
+          <Input
+            type="month"
+            value={selectedMonth === "all" ? "" : selectedMonth}
+            onChange={(e) => onSelectedMonth(e.target.value || "all")}
+            className="w-[180px]"
+          />
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onSelectedMonth("all")}
+          >
+            All
+          </Button>
+        </div>
       </div>
 
       {filteredExpenses.length === 0 ? (
