@@ -15,14 +15,14 @@ const categoryIcons: Record<string, React.ReactNode> = {
 };
 
 type SummaryPanelProps = {
-  filteredExpenses: Expense[];
+  summaryExpenses: Expense[];
   categories: string[];
   selectedMonth: string;
   chartData: { category: string; amount: number }[];
 };
 
 export default function SummaryPanel({
-  filteredExpenses,
+  summaryExpenses,
   categories,
   selectedMonth,
   chartData,
@@ -61,7 +61,7 @@ export default function SummaryPanel({
 
   const allCategoryTotals = categories.reduce(
     (acc, category) => {
-      acc[category] = getTotalByCategory(filteredExpenses, category);
+      acc[category] = getTotalByCategory(summaryExpenses, category);
       return acc;
     },
     {} as Record<string, number>,

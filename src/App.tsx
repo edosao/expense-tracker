@@ -100,13 +100,19 @@ export default function App() {
     selectedCategories.length === 0 ||
     selectedCategories.includes(exp.category);
 
+  // For the list — includes search
   const filteredExpenses = expenses.filter(
     (exp) => matchesMonth(exp) && matchesSearch(exp) && matchesCategory(exp),
   );
 
+  // For the summary — excludes search so totals are not affected by search
+  const summaryExpenses = expenses.filter(
+    (exp) => matchesMonth(exp) && matchesCategory(exp),
+  );
+
   const chartData = categories.map((category) => ({
     category,
-    amount: getTotalByCategory(filteredExpenses, category),
+    amount: getTotalByCategory(summaryExpenses, category),
   }));
 
   return (
@@ -119,6 +125,7 @@ export default function App() {
           <div className="max-w-5xl mx-auto px-4 py-6">
             <Dashboard
               filteredExpenses={filteredExpenses}
+              summaryExpenses={summaryExpenses}
               expenses={expenses}
               categories={categories}
               selectedMonth={selectedMonth}

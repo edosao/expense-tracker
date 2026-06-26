@@ -40,7 +40,7 @@ export default function AddExpenseDialog({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!title || !amount || !category) {
+    if (!title || !amount || !category || Number(amount) <= 0) {
       setError("Please fill all fields including category");
       return;
     }
