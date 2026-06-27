@@ -5,6 +5,7 @@ import Expenses from "./Expenses";
 
 type DashboardProps = {
   filteredExpenses: Expense[];
+  summaryExpenses: Expense[];
   expenses: Expense[];
   categories: string[];
   selectedMonth: string;
@@ -19,6 +20,7 @@ type DashboardProps = {
 
 export default function Dashboard({
   filteredExpenses,
+  summaryExpenses,
   expenses,
   categories,
   selectedMonth,
@@ -33,13 +35,13 @@ export default function Dashboard({
   return (
     <div className="space-y-6">
       <StatsStrip
-        filteredExpenses={filteredExpenses}
+        summaryExpenses={summaryExpenses}
         categories={categories}
         selectedMonth={selectedMonth}
       />
 
       <SummaryPanel
-        filteredExpenses={filteredExpenses}
+        summaryExpenses={summaryExpenses}
         categories={categories}
         selectedMonth={selectedMonth}
         chartData={chartData}

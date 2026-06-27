@@ -4,21 +4,21 @@ import { TrendingUp, Wallet, Tag } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
 type StatsStripProps = {
-  filteredExpenses: Expense[];
+  summaryExpenses?: Expense[];
   categories: string[];
   selectedMonth: string;
 };
 
 export default function StatsStrip({
-  filteredExpenses,
+  summaryExpenses = [],
   categories,
   selectedMonth,
 }: StatsStripProps) {
-  const total = getTotalExpenses(filteredExpenses);
+  const total = getTotalExpenses(summaryExpenses);
 
   const topCategory = categories.reduce(
     (top, cat) => {
-      const amount = getTotalByCategory(filteredExpenses, cat);
+      const amount = getTotalByCategory(summaryExpenses, cat);
       return amount > top.amount ? { name: cat, amount } : top;
     },
     { name: "-", amount: 0 },
@@ -45,7 +45,7 @@ export default function StatsStrip({
         </div>
         <div>
           <p className="text-xs text-muted-foreground">Transactions</p>
-          <p className="text-xl font-bold">{filteredExpenses.length}</p>
+          <p className="text-xl font-bold">{summaryExpenses.length}</p>
           <p className="text-xs text-muted-foreground">{label}</p>
         </div>
       </Card>

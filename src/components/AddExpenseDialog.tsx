@@ -32,7 +32,7 @@ export default function AddExpenseDialog({
   categories = [],
 }: AddExpenseDialogProps) {
   const [title, setTitle] = useState("");
-  const [amount, setAmount] = useState("");
+  const [amount, setAmount] = useState<number>(0);
   const [category, setCategory] = useState("");
   const [noteContent, setNoteContent] = useState("");
   const [error, setError] = useState("");
@@ -40,7 +40,7 @@ export default function AddExpenseDialog({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!title || !amount || !category) {
+    if (!title || !amount || !category || amount <= 0) {
       setError("Please fill all fields including category");
       return;
     }
@@ -68,7 +68,7 @@ export default function AddExpenseDialog({
 
     onAddExpense(newExpense);
     setTitle("");
-    setAmount("");
+    setAmount(0);
     setCategory("");
     setNoteContent("");
     setError("");
@@ -77,7 +77,7 @@ export default function AddExpenseDialog({
 
   const handleClose = () => {
     setTitle("");
-    setAmount("");
+    setAmount(0);
     setCategory("");
     setNoteContent("");
     setError("");
@@ -102,8 +102,8 @@ export default function AddExpenseDialog({
             placeholder="Amount"
             type="number"
             min="0"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
+            value={amount || ""}
+            onChange={(e) => setAmount(Number(e.target.value))}
           />
 
           <Select value={category} onValueChange={setCategory}>
