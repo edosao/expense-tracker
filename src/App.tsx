@@ -86,11 +86,16 @@ export default function App() {
     );
   };
 
+  const toMonthKey = (timestamp: number): string => {
+    const date = new Date(timestamp);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    return `${year}-${month}`;
+  };
+
   const matchesMonth = (exp: Expense) => {
     if (selectedMonth === "all") return true;
-    const expMonth = new Date(exp.createdAt).getMonth() + 1;
-    const selectedMonthNumber = Number(selectedMonth.split("-")[1]);
-    return expMonth === selectedMonthNumber;
+    return toMonthKey(exp.createdAt) === selectedMonth;
   };
 
   const matchesSearch = (exp: Expense) =>
