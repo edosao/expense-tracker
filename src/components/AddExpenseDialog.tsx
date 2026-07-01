@@ -25,6 +25,11 @@ type AddExpenseDialogProps = {
   categories: string[];
 };
 
+const getTodayDateString = () => {
+  const today = new Date();
+  return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+};
+
 export default function AddExpenseDialog({
   open,
   onClose,
@@ -34,13 +39,14 @@ export default function AddExpenseDialog({
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState<number>(0);
   const [category, setCategory] = useState("");
+  const [date, setDate] = useState(getTodayDateString());
   const [noteContent, setNoteContent] = useState("");
   const [error, setError] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!title || !amount || !category || amount <= 0) {
+    if (!title || !category || amount <= 0 || !date) {
       setError("Please fill all fields including category");
       return;
     }
@@ -60,8 +66,8 @@ export default function AddExpenseDialog({
     const newExpense: Expense = {
       id: expenseId,
       title,
-      amount: Number(amount),
-      createdAt: Date.now(),
+      amount,
+      createdAt: new Date(date).getTime(),
       category,
       notes,
     };
@@ -70,6 +76,7 @@ export default function AddExpenseDialog({
     setTitle("");
     setAmount(0);
     setCategory("");
+    setDate(getTodayDateString());
     setNoteContent("");
     setError("");
     onClose();
@@ -79,6 +86,7 @@ export default function AddExpenseDialog({
     setTitle("");
     setAmount(0);
     setCategory("");
+    setDate(getTodayDateString());
     setNoteContent("");
     setError("");
     onClose();
@@ -104,6 +112,12 @@ export default function AddExpenseDialog({
             min="0"
             value={amount || ""}
             onChange={(e) => setAmount(Number(e.target.value))}
+          />
+
+          <Input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
           />
 
           <Select value={category} onValueChange={setCategory}>
