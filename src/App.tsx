@@ -86,8 +86,7 @@ export default function App() {
     );
   };
 
-  const toMonthKey = (timestamp: number): string => {
-    const date = new Date(timestamp);
+  const getMonthYearFormat = (date: Date): string => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
     return `${year}-${month}`;
@@ -95,7 +94,7 @@ export default function App() {
 
   const matchesMonth = (exp: Expense) => {
     if (selectedMonth === "all") return true;
-    return toMonthKey(exp.createdAt) === selectedMonth;
+    return getMonthYearFormat(new Date(exp.createdAt)) === selectedMonth;
   };
 
   const matchesSearch = (exp: Expense) =>
