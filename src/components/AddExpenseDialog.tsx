@@ -17,6 +17,8 @@ import {
 import { PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Expense, INote } from "@/types/expense";
+import { validateExpense } from "@/utils/expense";
+import toast from "react-hot-toast";
 
 type AddExpenseDialogProps = {
   open: boolean;
@@ -40,8 +42,9 @@ export default function AddExpenseDialog({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!title || !amount || !category || amount <= 0) {
-      setError("Please fill all fields including category");
+    const error = validateExpense({ title, amount, category });
+    if (error) {
+      toast.error(error);
       return;
     }
 
@@ -67,6 +70,7 @@ export default function AddExpenseDialog({
     };
 
     onAddExpense(newExpense);
+    toast.success("Expense added!");
     setTitle("");
     setAmount(0);
     setCategory("");

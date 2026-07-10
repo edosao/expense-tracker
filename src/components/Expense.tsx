@@ -14,6 +14,8 @@ import type { Expense, INote } from "@/types/expense";
 import { useState } from "react";
 import Note from "./Note";
 import ConfirmDialog from "./ConfirmDialog";
+import { validateExpense } from "@/utils/expense";
+import toast from "react-hot-toast";
 
 type ExpenseProps = {
   expense: Expense;
@@ -34,8 +36,14 @@ export default function Expense({
   const [showConfirm, setShowConfirm] = useState(false);
 
   const handleSave = () => {
+    const error = validateExpense(draft);
+    if (error) {
+      toast.error(error);
+      return;
+    }
     onSaveExpense(draft);
     setIsEditing(false);
+    toast.success("Expense updated!");
   };
 
   const handleCancel = () => {
@@ -94,7 +102,7 @@ export default function Expense({
 
               <Input
                 type="number"
-                value={draft.amount}
+                value={draft.amount || ""}
                 onChange={(e) =>
                   setDraft({ ...draft, amount: Number(e.target.value) })
                 }
