@@ -56,11 +56,3 @@ export const exportToCSV = (expenses: Expense[]) => {
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 };
-
-export const validateExpense = (expense: Partial<Expense>): string | null => {
-  if (!expense.title?.trim()) return "Title is required";
-  if (!expense.category) return "Category is required";
-  if (!expense.amount || expense.amount <= 0)
-    return "Amount must be greater than zero";
-  return null;
-};
