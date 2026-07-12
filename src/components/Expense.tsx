@@ -35,7 +35,6 @@ export default function Expense({
   const [showConfirm, setShowConfirm] = useState(false);
 
   const handleSave = () => {
-    // Direct validation
     if (!draft.title.trim()) {
       toast.error("Title is required");
       return;
@@ -232,7 +231,10 @@ export default function Expense({
                   <Button
                     size="sm"
                     variant="destructive"
-                    onClick={() => setShowConfirm(true)}
+                    onClick={() => {
+                      setShowConfirm(true);
+                      console.log(showConfirm);
+                    }}
                   >
                     <Trash2 className="w-4 h-4" />
                   </Button>
@@ -251,7 +253,10 @@ export default function Expense({
           onDeleteExpense(expense.id);
           setShowConfirm(false);
         }}
-        onCancel={() => setShowConfirm(false)}
+        onCancel={() => {
+          setShowConfirm(false);
+          console.log(showConfirm);
+        }}
       />
     </>
   );

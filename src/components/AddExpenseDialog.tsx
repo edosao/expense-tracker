@@ -40,7 +40,6 @@ export default function AddExpenseDialog({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Simple, direct validation
     if (!title || !category || amount <= 0) {
       toast.error("Please fill all fields including category");
       return;
