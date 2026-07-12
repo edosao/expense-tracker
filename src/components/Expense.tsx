@@ -231,10 +231,7 @@ export default function Expense({
                   <Button
                     size="sm"
                     variant="destructive"
-                    onClick={() => {
-                      setShowConfirm(true);
-                      console.log(showConfirm);
-                    }}
+                    onClick={() => setShowConfirm(true)}
                   >
                     <Trash2 className="w-4 h-4" />
                   </Button>
@@ -253,10 +250,7 @@ export default function Expense({
           onDeleteExpense(expense.id);
           setShowConfirm(false);
         }}
-        onCancel={() => {
-          setShowConfirm(false);
-          console.log(showConfirm);
-        }}
+        onCancel={() => setShowConfirm(false)}
       />
     </>
   );
