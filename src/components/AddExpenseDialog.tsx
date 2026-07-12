@@ -17,6 +17,7 @@ import {
 import { PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Expense, INote } from "@/types/expense";
+import toast from "react-hot-toast";
 
 type AddExpenseDialogProps = {
   open: boolean;
@@ -35,13 +36,13 @@ export default function AddExpenseDialog({
   const [amount, setAmount] = useState<number>(0);
   const [category, setCategory] = useState("");
   const [noteContent, setNoteContent] = useState("");
-  const [error, setError] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!title || !amount || !category || amount <= 0) {
-      setError("Please fill all fields including category");
+    // Simple, direct validation
+    if (!title || !category || amount <= 0) {
+      toast.error("Please fill all fields including category");
       return;
     }
 
@@ -60,18 +61,18 @@ export default function AddExpenseDialog({
     const newExpense: Expense = {
       id: expenseId,
       title,
-      amount: Number(amount),
+      amount,
       createdAt: Date.now(),
       category,
       notes,
     };
 
     onAddExpense(newExpense);
+    toast.success("Expense added!");
     setTitle("");
     setAmount(0);
     setCategory("");
     setNoteContent("");
-    setError("");
     onClose();
   };
 
@@ -80,7 +81,6 @@ export default function AddExpenseDialog({
     setAmount(0);
     setCategory("");
     setNoteContent("");
-    setError("");
     onClose();
   };
 
@@ -102,6 +102,7 @@ export default function AddExpenseDialog({
             placeholder="Amount"
             type="number"
             min="0"
+            step="0.01"
             value={amount || ""}
             onChange={(e) => setAmount(Number(e.target.value))}
           />
@@ -124,8 +125,6 @@ export default function AddExpenseDialog({
             value={noteContent}
             onChange={(e) => setNoteContent(e.target.value)}
           />
-
-          {error && <p className="text-sm text-destructive">{error}</p>}
 
           <motion.div whileTap={{ scale: 0.95 }}>
             <Button type="submit" className="w-full gap-2">
