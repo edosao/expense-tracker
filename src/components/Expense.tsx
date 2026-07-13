@@ -35,7 +35,6 @@ export default function Expense({
   const [showConfirm, setShowConfirm] = useState(false);
 
   const handleSave = () => {
-    // Direct validation
     if (!draft.title.trim()) {
       toast.error("Title is required");
       return;
