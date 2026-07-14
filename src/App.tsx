@@ -78,6 +78,10 @@ export default function App() {
           : expense,
       ),
     );
+
+    setSelectedCategories((prev) =>
+      prev.map((c) => (c === oldCategory ? formattedCategory : c)),
+    );
   };
 
   const toggleCategory = (category: string, checked: boolean) => {
