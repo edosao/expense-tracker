@@ -55,13 +55,14 @@ export default function App() {
   const handleDeleteCategory = (category: string) => {
     if (category === "other") return;
     setCategories((prev) => prev.filter((c) => c !== category));
-    setExpenses((prev) =>
-      prev.map((expense) =>
+    setExpenses((prev) => {
+      const updated = prev.map((expense) =>
         expense.category === category
           ? { ...expense, category: "other" }
           : expense,
-      ),
-    );
+      );
+      return updated;
+    });
   };
 
   const handleEditCategory = (oldCategory: string, newCategory: string) => {
@@ -71,13 +72,14 @@ export default function App() {
     setCategories((prev) =>
       prev.map((c) => (c === oldCategory ? formattedCategory : c)),
     );
-    setExpenses((prev) =>
-      prev.map((expense) =>
+    setExpenses((prev) => {
+      const updated = prev.map((expense) =>
         expense.category === oldCategory
           ? { ...expense, category: formattedCategory }
           : expense,
-      ),
-    );
+      );
+      return updated;
+    });
 
     setSelectedCategories((prev) =>
       prev.map((c) => (c === oldCategory ? formattedCategory : c)),
