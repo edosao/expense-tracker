@@ -33,13 +33,14 @@ export const retrieveFromLocalStorage = (keyname: string) => {
 };
 
 export const exportToCSV = (expenses: Expense[]) => {
-  const headers = ["title", "amount", "date", "category"];
+  const headers = ["title", "amount", "date", "category", "notes"];
 
   const rows = expenses.map((expense) => [
     expense.title,
     expense.amount,
     new Date(expense.createdAt).toISOString().split("T")[0],
     expense.category,
+    expense.notes?.[0]?.content || "",
   ]);
 
   const csv = Papa.unparse({ fields: headers, data: rows });
