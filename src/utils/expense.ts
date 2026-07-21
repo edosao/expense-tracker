@@ -1,5 +1,6 @@
 import type { Expense } from "@/types/expense";
 import Papa from "papaparse";
+import toast from "react-hot-toast";
 
 export function getTotalByCategory(
   expenses: Expense[],
@@ -15,13 +16,17 @@ export function getTotalExpenses(expenses: Expense[]): number {
 }
 
 export const fetchExpensesFromLocalStorage = () => {
-  const expenses = retrieveFromLocalStorage("expenses");
-  if (!expenses) return [];
-
-  return JSON.parse(expenses).map((e: Expense) => ({
-    ...e,
-    notes: e.notes ?? [],
-  }));
+  try {
+    const expenses = retrieveFromLocalStorage("expenses");
+    if (!expenses) return [];
+    return JSON.parse(expenses).map((e: Expense) => ({
+      ...e,
+      notes: e.notes ?? [],
+    }));
+  } catch {
+    toast.error("Could not load expenses");
+    return [];
+  }
 };
 
 export const storeInLocalStorage = <T>(keyname: string, expenses: T) => {
