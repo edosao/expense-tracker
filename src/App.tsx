@@ -11,6 +11,7 @@ import {
   storeInLocalStorage,
   getTotalByCategory,
 } from "./utils/expense";
+import toast from "react-hot-toast";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>("expenses");
@@ -67,11 +68,19 @@ export default function App() {
 
   const handleEditCategory = (oldCategory: string, newCategory: string) => {
     if (oldCategory === "other") return;
+
     const formattedCategory = newCategory.trim().toLowerCase();
     if (!formattedCategory || formattedCategory === "other") return;
+
+    if (categories.includes(formattedCategory)) {
+      toast.error("Category already exists");
+      return;
+    }
+
     setCategories((prev) =>
       prev.map((c) => (c === oldCategory ? formattedCategory : c)),
     );
+
     setExpenses((prev) => {
       const updated = prev.map((expense) =>
         expense.category === oldCategory
