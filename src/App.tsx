@@ -113,7 +113,10 @@ export default function App() {
   };
 
   const matchesSearch = (exp: Expense) =>
-    exp.title.toLowerCase().includes(searchQuery.toLowerCase());
+    exp.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    exp.notes.some((note) =>
+      note.content.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
 
   const matchesCategory = (exp: Expense) =>
     selectedCategories.length === 0 ||
